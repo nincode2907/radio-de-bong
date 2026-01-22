@@ -5,319 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋</title>
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            /* Light Mode Defaults */
-            --bg-color: #f0f2f5;
-            --text-color: #333;
-            --player-bg: rgba(255, 255, 255, 0.8);
-            --player-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --accent-color: #ff758c;
-            --secondary-text: #666;
-            --disk-border: rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #1a1a2e;
-            --text-color: #e0e0e0;
-            --player-bg: rgba(22, 33, 62, 0.8);
-            --player-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --accent-color: #e94560;
-            --secondary-text: #a0a0a0;
-            --disk-border: rgba(255, 255, 255, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.5s ease, color 0.5s ease;
-            overflow: hidden;
-        }
-
-        /* Dark Mode Toggle */
-        .theme-switch-wrapper {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-
-        .theme-switch {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-color);
-            transition: transform 0.3s;
-        }
-
-        .theme-switch:hover {
-            transform: rotate(15deg);
-        }
-
-        /* Player Card */
-        .player {
-            width: 350px;
-            padding: 30px;
-            background: var(--player-bg);
-            border-radius: 30px;
-            box-shadow: var(--player-shadow);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            text-align: center;
-            position: relative;
-            transition: all 0.5s ease;
-        }
-
-        /* Header */
-        h2 {
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 1.2rem;
-        }
-
-        .now-playing {
-            font-size: 0.8rem;
-            color: var(--secondary-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-
-        /* Vinyl Record */
-        .disk-container {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 25px;
-            position: relative;
-        }
-
-        .disk {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: #000;
-            background-image: url('assets/images/1.jpg');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 0 0 5px var(--disk-border);
-            animation: rotate 20s linear infinite;
-            animation-play-state: paused;
-            position: relative;
-        }
-
-
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Song Info */
-        .song-info {
-            white-space: nowrap;
-            overflow: hidden;
-            margin-bottom: 20px;
-            position: relative;
-            height: 30px;
-        }
-
-        .song-title {
-            display: inline-block;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-color);
-            position: relative;
-            /* Marquee if needed logic in JS or straightforward CSS */
-        }
-
-        .marquee {
-            animation: marquee 10s linear infinite;
-            padding-left: 100%;
-        }
-
-        @keyframes marquee {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-200%);
-            }
-
-            /* simple approx */
-        }
-
-        /* Controls */
-        .control-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .main-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--secondary-text);
-            font-size: 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            color: var(--text-color);
-        }
-
-        .btn.active {
-            color: var(--accent-color);
-        }
-
-        .btn-big {
-            font-size: 2.5rem;
-            color: var(--text-color);
-            width: 60px;
-            height: 60px;
-            background: var(--bg-color);
-            border-radius: 50%;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05), -5px -5px 10px rgba(255, 255, 255, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Neumorphism-ish touch or just flat */
-        }
-
-        [data-theme="dark"] .btn-big {
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-big:hover {
-            color: var(--accent-color);
-            transform: scale(1.05);
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 100%;
-            height: 5px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
-            position: relative;
-        }
-
-        [data-theme="dark"] .progress-container {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .progress {
-            background: var(--accent-color);
-            border-radius: 5px;
-            height: 100%;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .time-stamps {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: var(--secondary-text);
-        }
-
-        /* Favorites List Modal */
-        .modal {
-            position: fixed;
-            bottom: -100%;
-            left: 0;
-            width: 100%;
-            height: 60%;
-            background: var(--player-bg);
-            border-top-right-radius: 30px;
-            border-top-left-radius: 30px;
-            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.2);
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 50;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal.open {
-            bottom: 0;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--secondary-text);
-        }
-
-        .playlist-items {
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .playlist-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-bottom: 5px;
-        }
-
-        .playlist-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        [data-theme="dark"] .playlist-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .playlist-item.active {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .playlist-item span {
-            margin-left: 10px;
-            font-size: 0.9rem;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 
 <body>
@@ -328,38 +18,121 @@
         </button>
     </div>
 
-    <div class="player">
-        <div class="now-playing">TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋</div>
-
-        <div class="disk-container">
-            <div class="disk" id="disk"></div>
-        </div>
-
-        <div class="song-info">
-            <div class="song-title" id="song-title">Chọn bài hát...</div>
-        </div>
-
-        <div class="progress-container" id="progress-container">
-            <div class="progress" id="progress"></div>
-        </div>
-        <div class="time-stamps">
-            <span id="current-time">0:00</span>
-            <span id="duration">0:00</span>
-        </div>
-
-        <div class="control-group">
-            <button class="btn" id="repeat-btn" title="Lặp lại"><i class="fas fa-redo"></i></button>
-            <button class="btn" id="fav-btn" title="Yêu thích"><i class="far fa-heart"></i></button>
-            <button class="btn" id="shuffle-btn" title="Trộn bài"><i class="fas fa-random"></i></button>
-            <button class="btn" id="list-btn" title="Danh sách"><i class="fas fa-list"></i></button>
-        </div>
-
-        <div class="main-controls">
-            <button class="btn" id="prev-btn"><i class="fas fa-step-backward"></i></button>
-            <button class="btn btn-big" id="play-btn"><i class="fas fa-play"></i></button>
-            <button class="btn" id="next-btn"><i class="fas fa-step-forward"></i></button>
-        </div>
+    <div class="sidebar-toggle" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
     </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <img src="assets/images/avatar.jpg" alt="Dê Bông" class="user-avatar">
+                <h3>Dê Bông 🐏</h3>
+            </div>
+            <button id="close-sidebar"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item active" data-target="player-section"><span class="nav-icon">🎵</span> Nghe Nhạc</li>
+            <li class="nav-item" data-target="diary-section"><span class="nav-icon">📖</span> Nhật Ký Tâm Trạng</li>
+            <li class="nav-item" id="lock-secret-btn" style="display: none; color: #ff6b6b;"><span
+                    class="nav-icon">🔒</span> Khóa Lại</li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>Code by ❤️</p>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <section id="player-section" class="content-section active">
+            <!-- Greeting Area (Moved here) -->
+            <div class="greeting-container" id="greeting"></div>
+
+            <div class="player">
+                <!-- Mode Tabs (Integrated) -->
+                <div class="mode-tabs">
+                    <div class="mode-highlight" id="mode-highlight"></div>
+                    <button class="mode-btn active" data-mode="chill" onclick="switchMode('chill')">Chill 🍃</button>
+                    <button class="mode-btn" data-mode="suy" onclick="switchMode('suy')">Suy 🌧️</button>
+                </div>
+
+                <div class="now-playing">TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋</div>
+
+                <div class="disk-container">
+                    <div class="disk" id="disk"></div>
+
+                    <!-- Message Bubble -->
+                    <div class="dream-box-container" id="message-container">
+                        <div class="dream-box" id="message-text"></div>
+                    </div>
+                </div>
+
+                <div class="song-info">
+                    <div class="song-title" id="song-title">Chọn bài hát...</div>
+                </div>
+
+                <div class="progress-container" id="progress-container">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-stamps">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+
+                <div class="control-group">
+                    <button class="btn" id="repeat-btn" title="Lặp lại"><i class="fas fa-redo"></i></button>
+                    <button class="btn" id="fav-btn" title="Yêu thích"><i class="far fa-heart"></i></button>
+                    <button class="btn" id="shuffle-btn" title="Trộn bài"><i class="fas fa-random"></i></button>
+                    <button class="btn" id="list-btn" title="Danh sách"><i class="fas fa-list"></i></button>
+                </div>
+                <div class="main-controls">
+                    <button class="btn" id="prev-btn"><i class="fas fa-step-backward"></i></button>
+                    <button class="btn btn-big" id="play-btn"><i class="fas fa-play"></i></button>
+                    <button class="btn" id="next-btn"><i class="fas fa-step-forward"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="diary-section" class="content-section">
+            <div class="diary-container">
+                <h2>Nhật Ký Tâm Trạng</h2>
+                <p class="diary-subtitle">Hôm nay Dê Bông thấy thế nào?</p>
+
+                <div class="mood-selector">
+                    <div class="mood-item selected" data-mood="vui">
+                        <div class="emoji">😊</div>
+                        <div class="label">Vui</div>
+                    </div>
+                    <div class="mood-item" data-mood="buon">
+                        <div class="emoji">😔</div>
+                        <div class="label">Buồn</div>
+                    </div>
+                    <div class="mood-item" data-mood="nho">
+                        <div class="emoji">🥺</div>
+                        <div class="label">Nhớ</div>
+                    </div>
+                    <div class="mood-item" data-mood="gian">
+                        <div class="emoji">😠</div>
+                        <div class="label">Giận</div>
+                    </div>
+                    <div class="mood-item" data-mood="met">
+                        <div class="emoji">😫</div>
+                        <div class="label">Mệt</div>
+                    </div>
+                </div>
+
+                <div class="diary-input-area">
+                    <textarea id="diary-content" placeholder="Kể cho anh nghe đi..."></textarea>
+                </div>
+
+                <button class="send-btn" id="send-diary-btn">
+                    <span>Gửi đi</span> <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay"></div>
 
     <div class="modal" id="playlist-modal">
         <div class="modal-header">
@@ -374,262 +147,25 @@
 
     <audio id="audio"></audio>
 
+    <!-- Password Modal -->
+    <div class="modal" id="password-modal">
+        <div class="modal-header">
+            <h3>🔐 Vùng Bí Mật</h3>
+            <button class="btn" id="close-password-modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="password-content">
+            <p>Chỉ dành cho Dê Bông thôi nhé!</p>
+            <div class="password-input-container">
+                <input type="password" id="secret-password" placeholder="Vùng bí mật, cần nhập mật mã tình yêu: ❤️">
+                <button id="unlock-btn" class="send-btn">Mở Khóa</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Load Playlist Data -->
     <script src="assets/js/songs.js"></script>
+    <script src="assets/js/diary.js"></script>
+    <script src="assets/js/main.js"></script>
 
-    <script>
-        // CONFIGURATION
-        // playlist is now loaded from assets/js/songs.js
-
-        // This array maps index (or song ID) to images. 
-        // We will try to load assets/images/{id}.jpg. If not, fallback.
-        const totalImages = 3;
-
-        // STATE
-        let currentIndex = 0;
-        let isPlaying = false;
-        let isShuffle = false;
-        let isRepeat = false; // 0: none, 1: one, (could extend to all) - Keeping simple: Toggle repeat one
-        let favorites = JSON.parse(localStorage.getItem('babe_favs')) || [];
-        let isDarkMode = localStorage.getItem('babe_theme') === 'dark';
-
-        // DOM
-        const audio = document.getElementById('audio');
-        const playBtn = document.getElementById('play-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const disk = document.getElementById('disk');
-        const titleEl = document.getElementById('song-title');
-        const progressContainer = document.getElementById('progress-container');
-        const progress = document.getElementById('progress');
-        const currTimeEl = document.getElementById('current-time');
-        const durTimeEl = document.getElementById('duration');
-        const favBtn = document.getElementById('fav-btn');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-        const repeatBtn = document.getElementById('repeat-btn');
-        const themeBtn = document.getElementById('theme-toggle');
-        const listBtn = document.getElementById('list-btn');
-        const modal = document.getElementById('playlist-modal');
-        const closeModal = document.getElementById('close-modal');
-        const playlistContainer = document.getElementById('playlist-container');
-
-        // INIT
-        function init() {
-            setTheme(isDarkMode);
-            loadTrack(currentIndex);
-            renderPlaylist();
-            updateFavIcon();
-
-            // Restore playback time
-            const savedTime = localStorage.getItem('babe_audio_time');
-            if (savedTime) audio.currentTime = parseFloat(savedTime);
-        }
-
-        // --- CORE FUNCTIONS ---
-
-        function loadTrack(index) {
-            const track = playlist[index];
-            audio.src = `assets/musics/${track.file}`;
-            titleEl.textContent = track.title;
-
-            // Random image for each track load
-            let imgId = Math.floor(Math.random() * totalImages) + 1;
-
-            // Set background image
-            disk.style.backgroundImage = `url('assets/images/${imgId}.jpg')`;
-
-            // Reset disk animation
-            disk.style.animationPlayState = 'paused';
-
-            updateFavIcon();
-            updateActivePlaylistItem();
-        }
-
-        function playMusic() {
-            audio.play();
-            isPlaying = true;
-            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            disk.style.animationPlayState = 'running';
-        }
-
-        function pauseMusic() {
-            audio.pause();
-            isPlaying = false;
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            disk.style.animationPlayState = 'paused';
-        }
-
-        function nextTrack() {
-            if (isShuffle) {
-                let newIndex;
-                do {
-                    newIndex = Math.floor(Math.random() * playlist.length);
-                } while (newIndex === currentIndex);
-                currentIndex = newIndex;
-            } else {
-                currentIndex++;
-                if (currentIndex >= playlist.length) currentIndex = 0;
-            }
-            loadTrack(currentIndex);
-            playMusic();
-        }
-
-        function prevTrack() {
-            currentIndex--;
-            if (currentIndex < 0) currentIndex = playlist.length - 1;
-            loadTrack(currentIndex);
-            playMusic();
-        }
-
-        // --- CONTROLS EVENTS ---
-
-        playBtn.addEventListener('click', () => {
-            if (isPlaying) pauseMusic();
-            else playMusic();
-        });
-
-        nextBtn.addEventListener('click', nextTrack);
-        prevBtn.addEventListener('click', prevTrack);
-
-        audio.addEventListener('ended', () => {
-            if (isRepeat) {
-                playMusic();
-            } else {
-                nextTrack();
-            }
-        });
-
-        audio.addEventListener('timeupdate', (e) => {
-            const { duration, currentTime } = e.srcElement;
-            const progressPercent = (currentTime / duration) * 100;
-            progress.style.width = `${progressPercent}%`;
-
-            // Time Display
-            if (duration) {
-                let min = Math.floor(duration / 60);
-                let sec = Math.floor(duration % 60);
-                if (sec < 10) sec = `0${sec}`;
-                durTimeEl.innerText = `${min}:${sec}`;
-            }
-
-            let minCurr = Math.floor(currentTime / 60);
-            let secCurr = Math.floor(currentTime % 60);
-            if (secCurr < 10) secCurr = `0${secCurr}`;
-            currTimeEl.innerText = `${minCurr}:${secCurr}`;
-
-            // Save state
-            localStorage.setItem('babe_audio_time', currentTime);
-        });
-
-        progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            audio.currentTime = (clickX / width) * duration;
-        });
-
-        // --- BUTTONS LOGIC ---
-
-        shuffleBtn.addEventListener('click', () => {
-            isShuffle = !isShuffle;
-            shuffleBtn.classList.toggle('active');
-        });
-
-        repeatBtn.addEventListener('click', () => {
-            isRepeat = !isRepeat;
-            repeatBtn.classList.toggle('active');
-            repeatBtn.innerHTML = isRepeat ? '<i class="fas fa-redo-alt"></i>' : '<i class="fas fa-redo"></i>';
-        });
-
-        favBtn.addEventListener('click', () => {
-            const currentSongId = playlist[currentIndex].id;
-            const index = favorites.indexOf(currentSongId);
-
-            if (index > -1) {
-                favorites.splice(index, 1);
-            } else {
-                favorites.push(currentSongId);
-            }
-
-            localStorage.setItem('babe_favs', JSON.stringify(favorites));
-            updateFavIcon();
-            renderPlaylist(); // Refresh list to show fav icons
-        });
-
-        function updateFavIcon() {
-            const currentSongId = playlist[currentIndex].id;
-            if (favorites.includes(currentSongId)) {
-                favBtn.innerHTML = '<i class="fas fa-heart"></i>';
-                favBtn.classList.add('active');
-            } else {
-                favBtn.innerHTML = '<i class="far fa-heart"></i>';
-                favBtn.classList.remove('active');
-            }
-        }
-
-        // --- PLAYLIST & FAVS UI ---
-
-        listBtn.addEventListener('click', () => {
-            modal.classList.add('open');
-        });
-
-        closeModal.addEventListener('click', () => {
-            modal.classList.remove('open');
-        });
-
-        function renderPlaylist() {
-            playlistContainer.innerHTML = '';
-            playlist.forEach((track, index) => {
-                const item = document.createElement('div');
-                item.classList.add('playlist-item');
-                if (index === currentIndex) item.classList.add('active');
-
-                const isFav = favorites.includes(track.id) ? '<i class="fas fa-heart" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
-
-                item.innerHTML = `
-                    ${isFav}
-                    <span>${track.title}</span>
-                `;
-
-                item.addEventListener('click', () => {
-                    currentIndex = index;
-                    loadTrack(currentIndex);
-                    playMusic();
-                    modal.classList.remove('open');
-                });
-
-                playlistContainer.appendChild(item);
-            });
-        }
-
-        function updateActivePlaylistItem() {
-            // Re-render is simplest to ensuring styling update
-            renderPlaylist();
-        }
-
-        // --- THEME ---
-
-        themeBtn.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            setTheme(isDarkMode);
-        });
-
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.setAttribute('data-theme', 'dark');
-                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('babe_theme', 'dark');
-            } else {
-                document.body.removeAttribute('data-theme');
-                themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('babe_theme', 'light');
-            }
-        }
-
-        // BOOT
-        init();
-
-    </script>
-</body>
 
 </html>
