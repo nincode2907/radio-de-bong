@@ -6,7 +6,7 @@ const ENCRYPTED_CONTENT = 'U2FsdGVkX19ldi6C3f2YMmhX4kd83cffq5pckLdF4qT/LNMkdjmvD
 let currentIndex = 0;
 let isPlaying = false;
 let isShuffle = false;
-let isRepeat = false;
+let isRepeat = 'off'; // 'off', 'one', 'favorites'
 let favorites = JSON.parse(localStorage.getItem('babe_favs')) || [];
 
 
@@ -66,22 +66,57 @@ const diaryContent = document.getElementById('diary-content');
 const sendDiaryBtn = document.getElementById('send-diary-btn');
 let selectedMood = 'vui'; // Default
 
+// SLEEP TIMER DOM & STATE
+const sleepBtn = document.getElementById('sleep-btn');
+const sleepDropdown = document.getElementById('sleep-dropdown');
+const sleepBadge = document.getElementById('sleep-badge');
+const sleepOptions = document.querySelectorAll('.sleep-option');
+let sleepTimerId = null;
+let sleepEndTime = null;
+let sleepUpdateInterval = null;
+
 // INIT
 function init() {
-    // Determine initial mode based on theme or time logic if needed
-    // But user want explict modes. Let's filter first.
+    // Determine initial mode based on saved state or time logic
     const hour = new Date().getHours();
+    const savedMode = localStorage.getItem('babe_mode');
+    const savedSongId = localStorage.getItem('babe_song_id');
+    const savedTime = parseFloat(localStorage.getItem('babe_audio_time')) || 0;
 
-    // If user hasn't selected a theme, decide based on time
+    // Theme: prioritize time of day (day/night) unless user manually selected
+    const isNightTime = (hour >= 18 || hour < 6);
     if (!localStorage.getItem('babe_theme')) {
-        isDarkMode = (hour >= 18 || hour < 6);
-        currentMode = isDarkMode ? 'suy' : 'chill';
+        // No manual theme selection - use time-based
+        isDarkMode = isNightTime;
+    }
+    // isDarkMode is already set from localStorage at line 18 if user selected before
+
+    // Mode: use saved mode if exists, otherwise based on time
+    if (savedMode) {
+        currentMode = savedMode;
     } else {
-        currentMode = isDarkMode ? 'suy' : 'chill';
+        currentMode = isNightTime ? 'suy' : 'chill';
     }
 
     setTheme(isDarkMode);
     switchMode(currentMode, false);
+
+    // Restore saved song position
+    if (savedSongId) {
+        const songIndex = currentPlaylist.findIndex(song => song.id === parseInt(savedSongId));
+        if (songIndex !== -1) {
+            currentIndex = songIndex;
+            loadTrack(currentIndex);
+
+            // Restore playback position when audio is ready
+            audio.addEventListener('loadedmetadata', function restoreTime() {
+                if (savedTime > 0 && savedTime < audio.duration) {
+                    audio.currentTime = savedTime;
+                }
+                audio.removeEventListener('loadedmetadata', restoreTime);
+            });
+        }
+    }
 
     showGreeting();
 
@@ -360,9 +395,13 @@ function switchMode(mode, autoSetTheme = true) {
         }
     });
 
-    // Filter Playlist
+    // Filter and Sort Playlist alphabetically by title
     currentPlaylist = playlist.filter(song => song.type === mode);
     if (currentPlaylist.length === 0) currentPlaylist = [...playlist];
+    currentPlaylist.sort((a, b) => a.title.localeCompare(b.title, 'vi'));
+
+    // Save current mode
+    localStorage.setItem('babe_mode', mode);
 
     // Set Theme
     if (autoSetTheme) {
@@ -468,7 +507,14 @@ function loadTrack(index) {
     const track = currentPlaylist[index];
     if (!track) return; // Empty list
 
-    audio.src = `assets/musics/${track.file}`;
+    // Set audio source (check if already preloaded for optimization)
+    const trackUrl = `assets/musics/${track.file}`;
+    if (!usePreloadedAudio(track.file)) {
+        audio.src = trackUrl;
+    }
+    // Ensure audio is ready to play
+    audio.load();
+
     titleEl.textContent = track.title;
 
     // Message Logic
@@ -499,40 +545,320 @@ function loadTrack(index) {
 
     updateFavIcon();
     updateActivePlaylistItem();
+
+    // Save current song to localStorage
+    localStorage.setItem('babe_song_id', track.id);
+
+    // Store current artwork URL globally for Media Session updates
+    window.currentArtworkUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}assets/images/${imgId}.jpg`;
+
+    // Update Media Session for lock screen controls
+    updateMediaSession();
+
+    // Smart Preload: preload next track after a short delay
+    setTimeout(preloadNextTrack, 2000);
 }
+
+// --- SMART PRELOAD (Cache bài tiếp theo) ---
+let preloadAudio = null;
+let preloadedTrackFile = null;
+
+function preloadNextTrack() {
+    // Can't predict shuffle, skip preload
+    if (isShuffle) {
+        return;
+    }
+
+    let nextTrack = null;
+
+    // Handle favorites repeat mode
+    if (isRepeat === 'favorites' && favorites.length > 0) {
+        const currentSongId = currentPlaylist[currentIndex]?.id;
+        const currentFavIndex = favorites.indexOf(currentSongId);
+
+        // Find next favorite that exists in current playlist
+        for (let i = 0; i < favorites.length; i++) {
+            let checkIndex = (currentFavIndex + 1 + i) % favorites.length;
+            let nextFavId = favorites[checkIndex];
+
+            const foundIndex = currentPlaylist.findIndex(song => song.id === nextFavId);
+            if (foundIndex !== -1) {
+                nextTrack = currentPlaylist[foundIndex];
+                break;
+            }
+        }
+    } else if (isRepeat !== 'one') {
+        // Normal sequential mode (skip if repeat one - same song)
+        const nextIndex = (currentIndex + 1) % currentPlaylist.length;
+        nextTrack = currentPlaylist[nextIndex];
+    }
+
+    if (!nextTrack) return;
+
+    // Already preloaded this track
+    if (preloadedTrackFile === nextTrack.file) return;
+
+    // Create or reuse preload audio
+    if (!preloadAudio) {
+        preloadAudio = new Audio();
+        preloadAudio.preload = 'auto';
+    }
+
+    // Set source and start preloading
+    preloadAudio.src = `assets/musics/${nextTrack.file}`;
+    preloadedTrackFile = nextTrack.file;
+
+    // Load enough data (browser will cache it)
+    preloadAudio.load();
+
+    console.log(`🎵 Preloaded: ${nextTrack.title}`);
+}
+
+// Use preloaded audio if available
+function usePreloadedAudio(trackFile) {
+    if (preloadedTrackFile === trackFile && preloadAudio) {
+        // Swap the preloaded audio to main audio
+        audio.src = preloadAudio.src;
+        preloadedTrackFile = null;
+        return true;
+    }
+    return false;
+}
+
+// Detect mobile for simpler handling (moved up for use in playMusic/pauseMusic)
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 function playMusic() {
     audio.play();
     isPlaying = true;
     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
     disk.style.animationPlayState = 'running';
+
+    // Fade in effect (desktop only)
+    if (!isMobile) {
+        audio.volume = 0;
+        fadeAudio('in');
+    }
+}
+
+// --- MEDIA SESSION ---
+function updateMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+
+    const track = currentPlaylist[currentIndex];
+    if (!track) return;
+
+    // Build artist string with sleep timer info
+    let artistText = 'Trạm Sạc Pin Dê Bông 🔋';
+    if (sleepEndTime) {
+        const remaining = Math.max(0, sleepEndTime - Date.now());
+        const mins = Math.floor(remaining / 60000);
+        if (mins > 0) {
+            artistText = `💤 Tắt sau ${mins} phút`;
+        } else {
+            const secs = Math.floor(remaining / 1000);
+            artistText = `💤 Tắt sau ${secs} giây`;
+        }
+    }
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: artistText,
+        album: track.type === 'chill' ? 'Chill 🍃' : 'Suy 🌧️',
+        artwork: [
+            { src: window.currentArtworkUrl || '', sizes: '512x512', type: 'image/jpeg' }
+        ]
+    });
+
+    // Set action handlers
+    navigator.mediaSession.setActionHandler('play', () => playMusic());
+    navigator.mediaSession.setActionHandler('pause', () => pauseMusic());
+    navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+    navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
 }
 
 function pauseMusic() {
-    audio.pause();
     isPlaying = false;
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
     disk.style.animationPlayState = 'paused';
+
+    // Mobile: pause immediately
+    if (isMobile) {
+        audio.pause();
+        return;
+    }
+
+    // Desktop: Fade out effect then pause
+    fadeAudio('out', () => {
+        audio.pause();
+        audio.volume = 1; // Reset volume for next play
+    });
+}
+
+// --- FADE AUDIO EFFECT ---
+let fadeInterval = null;
+const FADE_DURATION = 500; // 500ms for smooth fade
+const FADE_STEPS = 20;
+
+function fadeAudio(direction, callback) {
+    // Clear any existing fade
+    if (fadeInterval) {
+        clearInterval(fadeInterval);
+        fadeInterval = null;
+    }
+
+    // On mobile, use simpler/faster fade or skip if audio not playing
+    const effectiveDuration = isMobile ? 300 : FADE_DURATION;
+    const effectiveSteps = isMobile ? 10 : FADE_STEPS;
+    const stepTime = effectiveDuration / effectiveSteps;
+    const volumeStep = 1 / effectiveSteps;
+
+    if (direction === 'in') {
+        // Fade in: 0 -> 1
+        try {
+            audio.volume = 0;
+        } catch (e) {
+            // Some mobile browsers don't allow volume control
+            if (callback) callback();
+            return;
+        }
+
+        fadeInterval = setInterval(() => {
+            try {
+                if (audio.volume < 1 - volumeStep) {
+                    audio.volume = Math.min(1, audio.volume + volumeStep);
+                } else {
+                    audio.volume = 1;
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
+                    if (callback) callback();
+                }
+            } catch (e) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+                if (callback) callback();
+            }
+        }, stepTime);
+    } else {
+        // Fade out: current -> 0
+        fadeInterval = setInterval(() => {
+            try {
+                if (audio.volume > volumeStep) {
+                    audio.volume = Math.max(0, audio.volume - volumeStep);
+                } else {
+                    audio.volume = 0;
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
+                    if (callback) callback();
+                }
+            } catch (e) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+                if (callback) callback();
+            }
+        }, stepTime);
+    }
 }
 
 function nextTrack() {
-    if (isShuffle) {
-        let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * currentPlaylist.length);
-        } while (newIndex === currentIndex && currentPlaylist.length > 1);
-        currentIndex = newIndex;
-    } else {
-        currentIndex++;
-        if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+    // If in favorites repeat mode, navigate within favorites
+    if (isRepeat === 'favorites' && favorites.length > 0) {
+        playNextFavorite();
+        return;
     }
-    loadTrack(currentIndex);
-    playMusic();
+
+    // For mobile: switch track immediately to respond to user gesture
+    if (isMobile) {
+        if (isShuffle) {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * currentPlaylist.length);
+            } while (newIndex === currentIndex && currentPlaylist.length > 1);
+            currentIndex = newIndex;
+        } else {
+            currentIndex++;
+            if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+        }
+        loadTrack(currentIndex);
+        playMusic();
+        return;
+    }
+
+    // Desktop: Fade out then switch
+    fadeAudio('out', () => {
+        if (isShuffle) {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * currentPlaylist.length);
+            } while (newIndex === currentIndex && currentPlaylist.length > 1);
+            currentIndex = newIndex;
+        } else {
+            currentIndex++;
+            if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+        }
+        loadTrack(currentIndex);
+        playMusic();
+    });
 }
 
 function prevTrack() {
-    currentIndex--;
-    if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+    // If in favorites repeat mode, navigate within favorites
+    if (isRepeat === 'favorites' && favorites.length > 0) {
+        playPrevFavorite();
+        return;
+    }
+
+    // For mobile: switch track immediately
+    if (isMobile) {
+        currentIndex--;
+        if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        loadTrack(currentIndex);
+        playMusic();
+        return;
+    }
+
+    // Desktop: Fade out then switch
+    fadeAudio('out', () => {
+        currentIndex--;
+        if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        loadTrack(currentIndex);
+        playMusic();
+    });
+}
+
+// Play previous song from favorites
+function playPrevFavorite() {
+    if (favorites.length === 0) {
+        // No favorites, play previous regular track
+        currentIndex--;
+        if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        loadTrack(currentIndex);
+        playMusic();
+        return;
+    }
+
+    const currentSongId = currentPlaylist[currentIndex]?.id;
+    const currentFavIndex = favorites.indexOf(currentSongId);
+
+    // Try to find a favorite song that exists in current playlist (going backwards)
+    for (let i = 0; i < favorites.length; i++) {
+        let checkIndex = currentFavIndex - 1 - i;
+        if (checkIndex < 0) checkIndex = favorites.length + checkIndex;
+        checkIndex = ((checkIndex % favorites.length) + favorites.length) % favorites.length;
+
+        let prevFavId = favorites[checkIndex];
+
+        const prevIndex = currentPlaylist.findIndex(song => song.id === prevFavId);
+        if (prevIndex !== -1) {
+            currentIndex = prevIndex;
+            loadTrack(currentIndex);
+            playMusic();
+            return;
+        }
+    }
+
+    // No favorite found in current playlist, just go to last song
+    currentIndex = currentPlaylist.length - 1;
     loadTrack(currentIndex);
     playMusic();
 }
@@ -547,13 +873,75 @@ playBtn.addEventListener('click', () => {
 nextBtn.addEventListener('click', nextTrack);
 prevBtn.addEventListener('click', prevTrack);
 
+// Keyboard Controls (Desktop)
+document.addEventListener('keydown', (e) => {
+    // Ignore if user is typing in an input/textarea
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    switch (e.code) {
+        case 'Space':
+            e.preventDefault(); // Prevent page scroll
+            if (isPlaying) pauseMusic();
+            else playMusic();
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            nextTrack();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            prevTrack();
+            break;
+    }
+});
+
 audio.addEventListener('ended', () => {
-    if (isRepeat) {
+    if (isRepeat === 'one') {
+        // Repeat current song
+        audio.currentTime = 0;
         playMusic();
+    } else if (isRepeat === 'favorites') {
+        // Play next favorite song
+        playNextFavorite();
     } else {
         nextTrack();
     }
 });
+
+// Play next song from favorites
+function playNextFavorite() {
+    if (favorites.length === 0) {
+        // No favorites, play next regular track (without calling nextTrack to avoid loop)
+        currentIndex++;
+        if (currentIndex >= currentPlaylist.length) currentIndex = 0;
+        loadTrack(currentIndex);
+        playMusic();
+        return;
+    }
+
+    // Find current song in favorites
+    const currentSongId = currentPlaylist[currentIndex]?.id;
+    const currentFavIndex = favorites.indexOf(currentSongId);
+
+    // Try to find a favorite song that exists in current playlist
+    for (let i = 0; i < favorites.length; i++) {
+        let checkIndex = (currentFavIndex + 1 + i) % favorites.length;
+        let nextFavId = favorites[checkIndex];
+
+        const nextIndex = currentPlaylist.findIndex(song => song.id === nextFavId);
+        if (nextIndex !== -1) {
+            currentIndex = nextIndex;
+            loadTrack(currentIndex);
+            playMusic();
+            return;
+        }
+    }
+
+    // No favorite found in current playlist, just go to first song
+    currentIndex = 0;
+    loadTrack(currentIndex);
+    playMusic();
+}
 
 audio.addEventListener('timeupdate', (e) => {
     const { duration, currentTime } = e.srcElement;
@@ -573,8 +961,10 @@ audio.addEventListener('timeupdate', (e) => {
     if (secCurr < 10) secCurr = `0${secCurr}`;
     currTimeEl.innerText = `${minCurr}:${secCurr}`;
 
-    // Save state
-    localStorage.setItem('babe_audio_time', currentTime);
+    // Save state (throttle to reduce localStorage writes)
+    if (Math.floor(currentTime) % 2 === 0) {
+        localStorage.setItem('babe_audio_time', currentTime);
+    }
 });
 
 progressContainer.addEventListener('click', (e) => {
@@ -592,9 +982,26 @@ shuffleBtn.addEventListener('click', () => {
 });
 
 repeatBtn.addEventListener('click', () => {
-    isRepeat = !isRepeat;
-    repeatBtn.classList.toggle('active');
-    repeatBtn.innerHTML = isRepeat ? '<i class="fas fa-redo-alt"></i>' : '<i class="fas fa-redo"></i>';
+    const repeatBadge = document.getElementById('repeat-badge');
+
+    // Cycle: off -> one -> favorites -> off
+    if (isRepeat === 'off') {
+        isRepeat = 'one';
+        repeatBtn.classList.add('active');
+        repeatBadge.innerHTML = '1';
+        repeatBadge.classList.add('show');
+        repeatBtn.title = 'Lặp lại 1 bài';
+    } else if (isRepeat === 'one') {
+        isRepeat = 'favorites';
+        repeatBadge.innerHTML = '<i class="fas fa-heart"></i>';
+        repeatBtn.title = 'Lặp danh sách yêu thích';
+    } else {
+        isRepeat = 'off';
+        repeatBtn.classList.remove('active');
+        repeatBadge.classList.remove('show');
+        repeatBadge.innerHTML = '';
+        repeatBtn.title = 'Lặp lại';
+    }
 });
 
 favBtn.addEventListener('click', () => {
@@ -646,20 +1053,37 @@ modalOverlay.addEventListener('click', () => {
 
 function renderPlaylist() {
     playlistContainer.innerHTML = '';
+
+    // Create display order: current song first, then rest alphabetically
+    const displayOrder = [];
+
+    // Add currently playing song first
+    if (currentPlaylist[currentIndex]) {
+        displayOrder.push({ track: currentPlaylist[currentIndex], originalIndex: currentIndex });
+    }
+
+    // Add rest of songs (excluding current)
     currentPlaylist.forEach((track, index) => {
+        if (index !== currentIndex) {
+            displayOrder.push({ track, originalIndex: index });
+        }
+    });
+
+    displayOrder.forEach(({ track, originalIndex }) => {
         const item = document.createElement('div');
         item.classList.add('playlist-item');
-        if (index === currentIndex) item.classList.add('active');
+        if (originalIndex === currentIndex) item.classList.add('active');
 
         const isFav = favorites.includes(track.id) ? '<i class="fas fa-heart" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
+        const nowPlaying = originalIndex === currentIndex ? '<i class="fas fa-volume-up" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
 
         item.innerHTML = `
-            ${isFav}
+            ${nowPlaying}${isFav}
             <span>${track.title}</span>
         `;
 
         item.addEventListener('click', () => {
-            currentIndex = index;
+            currentIndex = originalIndex;
             loadTrack(currentIndex);
             playMusic();
             modal.classList.remove('open');
@@ -694,5 +1118,204 @@ function setTheme(isDark) {
     }
 }
 
+// --- SLEEP TIMER LOGIC ---
+
+// Toggle dropdown
+sleepBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sleepDropdown.classList.toggle('show');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!sleepDropdown.contains(e.target) && e.target !== sleepBtn) {
+        sleepDropdown.classList.remove('show');
+    }
+});
+
+// Handle option selection
+sleepOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const minutes = parseInt(option.dataset.minutes);
+        setSleepTimer(minutes);
+        sleepDropdown.classList.remove('show');
+    });
+});
+
+function setSleepTimer(minutes) {
+    // Clear existing timer
+    if (sleepTimerId) {
+        clearTimeout(sleepTimerId);
+        sleepTimerId = null;
+    }
+    if (sleepUpdateInterval) {
+        clearInterval(sleepUpdateInterval);
+        sleepUpdateInterval = null;
+    }
+
+    if (minutes === 0) {
+        // Cancel timer
+        sleepEndTime = null;
+        sleepBadge.classList.remove('show');
+        sleepBtn.classList.remove('active');
+        updateMediaSession(); // Update lock screen to remove timer info
+        return;
+    }
+
+    // Set new timer
+    sleepEndTime = Date.now() + (minutes * 60 * 1000);
+    sleepBtn.classList.add('active');
+
+    // Update badge immediately
+    updateSleepBadge();
+    sleepBadge.classList.add('show');
+
+    // Update Media Session immediately with timer info
+    updateMediaSession();
+
+    // Update badge every second
+    sleepUpdateInterval = setInterval(updateSleepBadge, 1000);
+
+    // Set the actual timer to pause music
+    sleepTimerId = setTimeout(() => {
+        pauseMusic();
+        sleepEndTime = null;
+        sleepBadge.classList.remove('show');
+        sleepBtn.classList.remove('active');
+        clearInterval(sleepUpdateInterval);
+
+        // Optional: Show notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('💤 Ngủ ngon nhé!', {
+                body: 'Nhạc đã tắt theo hẹn giờ.',
+                icon: 'assets/images/avatar.jpg'
+            });
+        }
+    }, minutes * 60 * 1000);
+}
+
+function updateSleepBadge() {
+    if (!sleepEndTime) return;
+
+    const remaining = Math.max(0, sleepEndTime - Date.now());
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+
+    if (remaining <= 0) {
+        sleepBadge.textContent = '';
+        sleepBadge.classList.remove('show');
+        return;
+    }
+
+    sleepBadge.textContent = mins > 0 ? `${mins}p` : `${secs}s`;
+
+    // Update Media Session with timer info (every 30 seconds to avoid too many updates)
+    if (secs === 0 || secs === 30) {
+        updateMediaSession();
+    }
+}
+
+// --- MOBILE GESTURES ---
+const diskContainer = document.querySelector('.disk-container');
+let touchStartX = 0;
+let touchStartY = 0;
+let isDragging = false;
+let isAnimating = false;
+const SWIPE_THRESHOLD = 50;
+
+if (diskContainer) {
+    // 1. Swipe Gestures
+    diskContainer.addEventListener('touchstart', (e) => {
+        if (isAnimating) return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        isDragging = true;
+        // Disable transition for direct tracking
+        diskContainer.style.transition = 'none';
+    }, { passive: true });
+
+    diskContainer.addEventListener('touchmove', (e) => {
+        if (isAnimating || !isDragging) return;
+        const touchX = e.changedTouches[0].screenX;
+        const touchY = e.changedTouches[0].screenY;
+        const diffX = touchX - touchStartX;
+        const diffY = touchY - touchStartY;
+
+        // Ignore if scrolling vertically
+        if (Math.abs(diffY) > Math.abs(diffX)) return;
+
+        diskContainer.style.transform = `translateX(${diffX}px)`;
+    }, { passive: true });
+
+    diskContainer.addEventListener('touchend', (e) => {
+        if (isAnimating || !isDragging) return;
+        isDragging = false;
+
+        const touchX = e.changedTouches[0].screenX;
+        const diffX = touchX - touchStartX;
+
+        diskContainer.style.transition = 'transform 0.3s ease-out';
+
+        if (Math.abs(diffX) > SWIPE_THRESHOLD) {
+            isAnimating = true; // Lock interactions
+            if (diffX > 0) {
+                // Swipe Right (Drag to Right) -> Next Track
+                diskContainer.style.transform = `translateX(100vw)`;
+                setTimeout(() => {
+                    nextTrack();
+                    resetDiskPosition('left');
+                }, 300);
+            } else {
+                // Swipe Left (Drag to Left) -> Prev Track
+                diskContainer.style.transform = `translateX(-100vw)`;
+                setTimeout(() => {
+                    prevTrack();
+                    resetDiskPosition('right');
+                }, 300);
+            }
+        } else {
+            // Rebound (not a swipe)
+            diskContainer.style.transform = `translateX(0)`;
+        }
+    });
+
+    // 2. Click/Tap to Toggle Play/Pause
+    diskContainer.addEventListener('click', (e) => {
+        if (isAnimating) return;
+        // Only toggle if clicked (browser suppresses click if dragged significantly)
+        if (isPlaying) pauseMusic();
+        else playMusic();
+    });
+}
+
+function resetDiskPosition(fromSide) {
+    // Reset position instantly off-screen
+    diskContainer.style.transition = 'none';
+    if (fromSide === 'left') {
+        diskContainer.style.transform = `translateX(-100vw)`;
+    } else {
+        diskContainer.style.transform = `translateX(100vw)`;
+    }
+
+    // Force reflow
+    void diskContainer.offsetWidth;
+
+    // Animate back to center
+    diskContainer.style.transition = 'transform 0.5s ease-out';
+    diskContainer.style.transform = `translateX(0)`;
+
+    // Unlock after animation
+    setTimeout(() => {
+        isAnimating = false;
+    }, 500);
+}
+
 // BOOT
 init();
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch((error) => console.log('Service Worker Registration Failed:', error));
+}

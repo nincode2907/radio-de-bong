@@ -982,3 +982,129 @@ h2 {
         pointer-events: auto;
     }
 }
+
+/* Sleep Timer */
+.sleep-timer-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.sleep-timer-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: var(--player-bg);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    padding: 8px 0;
+    margin-bottom: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 100;
+    min-width: 120px;
+}
+
+.sleep-timer-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+.sleep-option {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.sleep-option:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--accent-color);
+}
+
+[data-theme="dark"] .sleep-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sleep-option.cancel {
+    color: #ff6b6b;
+    border-top: 1px solid var(--secondary-color);
+    margin-top: 5px;
+    padding-top: 12px;
+}
+
+.sleep-option.cancel:hover {
+    color: #ff4757;
+}
+
+.sleep-timer-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent-color);
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-weight: bold;
+    display: none;
+    animation: pulse 2s infinite;
+}
+
+.sleep-timer-badge.show {
+    display: block;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+#sleep-btn.active {
+    color: var(--accent-color);
+}
+
+/* Repeat Button with Badge */
+.repeat-btn-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.repeat-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--accent-color);
+    color: white;
+    font-size: 0.55rem;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 3px;
+    border-radius: 50%;
+    font-weight: bold;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 14px;
+    text-align: center;
+}
+
+.repeat-badge.show {
+    display: flex;
+}
+
+.repeat-badge i {
+    font-size: 0.5rem;
+}

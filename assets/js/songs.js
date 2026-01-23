@@ -147,6 +147,13 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 43,
+        file: '43.mp3',
+        title: 'Con Đường Hạnh Phúc - Thùy Chi',
+        type: 'chill',
+        message: ''
+    },
 
 
     // --- LIST SUY (Nhạc buồn, tâm trạng) ---
@@ -294,7 +301,7 @@ const playlist = [
         id: 20,
         file: '20.mp3',
         title: 'Khổ Quá Thì Về Mẹ Nuôi - Noo Phước Thịnh',
-        type: 'chill',
+        type: 'suy',
         message: ''
     },
 ];

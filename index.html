@@ -5,9 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋</title>
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
 </head>
 
 <body>
@@ -80,9 +84,22 @@
                 </div>
 
                 <div class="control-group">
-                    <button class="btn" id="repeat-btn" title="Lặp lại"><i class="fas fa-redo"></i></button>
                     <button class="btn" id="fav-btn" title="Yêu thích"><i class="far fa-heart"></i></button>
+                    <div class="repeat-btn-wrapper">
+                        <button class="btn" id="repeat-btn" title="Lặp lại"><i class="fas fa-redo"></i></button>
+                        <div class="repeat-badge" id="repeat-badge"></div>
+                    </div>
                     <button class="btn" id="shuffle-btn" title="Trộn bài"><i class="fas fa-random"></i></button>
+                    <div class="sleep-timer-wrapper">
+                        <button class="btn" id="sleep-btn" title="Hẹn giờ tắt"><i class="fas fa-clock"></i></button>
+                        <div class="sleep-timer-dropdown" id="sleep-dropdown">
+                            <div class="sleep-option" data-minutes="15">15 phút</div>
+                            <div class="sleep-option" data-minutes="30">30 phút</div>
+                            <div class="sleep-option" data-minutes="60">60 phút</div>
+                            <div class="sleep-option cancel" data-minutes="0">Hủy hẹn giờ</div>
+                        </div>
+                        <div class="sleep-timer-badge" id="sleep-badge"></div>
+                    </div>
                     <button class="btn" id="list-btn" title="Danh sách"><i class="fas fa-list"></i></button>
                 </div>
                 <div class="main-controls">
