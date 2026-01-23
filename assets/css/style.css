@@ -622,6 +622,13 @@ h2 {
     color: var(--text-color);
 }
 
+#prev-btn,
+#next-btn {
+    font-size: 1.8rem;
+    /* Increased from 1.2rem */
+    padding: 10px;
+}
+
 .btn.active {
     color: var(--accent-color);
 }
@@ -932,14 +939,17 @@ h2 {
 
     .greeting-container {
         font-size: 0.9rem;
-        margin-top: 75px;
-        /* Increase to ensure no overlap with icons */
-        margin-bottom: 20px;
-        padding: 0 20px;
+        margin-top: 10px;
+        /* Reduced from 75px */
+        margin-bottom: 25px;
+        /* Reduced from 20px */
+        padding: 0 15px;
     }
 
     .player {
         margin-top: 0;
+        padding: 15px 20px;
+        /* Reduced padding for mobile */
     }
 
     .dream-box-container {
