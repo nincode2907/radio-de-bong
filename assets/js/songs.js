@@ -154,6 +154,20 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 44,
+        file: '44.mp3',
+        title: 'Lửa Gần Rơm - Quân A.P',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 8,
+        file: '8.mp3',
+        title: 'Người Đầu Tiên - Juky San, Em Xinh Say Hi',
+        type: 'chill',
+        message: 'Người đầu tiên làm anh web tặng riêng thế này đấy. Cảm thấy VIP chưa? 👑'
+    },
 
 
     // --- LIST SUY (Nhạc buồn, tâm trạng) ---
@@ -170,13 +184,6 @@ const playlist = [
         title: 'Thôi Đừng Chiêm Bao',
         type: 'suy',
         message: 'Đừng chiêm bao nữa, gặp anh ngoài đời real 4k sướng hơn nhiều. Set kèo liền? ☕'
-    },
-    {
-        id: 8,
-        file: '8.mp3',
-        title: 'Người Đầu Tiên - Juky San, Em Xinh Say Hi',
-        type: 'suy',
-        message: 'Người đầu tiên làm anh web tặng riêng thế này đấy. Cảm thấy VIP chưa? 👑'
     },
     {
         id: 12,
@@ -304,4 +311,12 @@ const playlist = [
         type: 'suy',
         message: ''
     },
+    {
+        id: 45,
+        file: '45.mp3',
+        title: 'Tình Yêu Buông Tha Cho Chúng Ta - Trungg I.U Lâm Bảo Ngọc x Caotri',
+        type: 'suy',
+        message: ''
+    },
+
 ];
