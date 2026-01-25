@@ -318,5 +318,12 @@ const playlist = [
         type: 'suy',
         message: ''
     },
+    {
+        id: 46,
+        file: '46.mp3',
+        title: 'Có Chàng Trai Viết Lên Cây - Phan Mạnh Quỳnh',
+        type: 'suy',
+        message: ''
+    },
 
 ];

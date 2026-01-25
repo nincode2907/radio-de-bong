@@ -747,6 +747,109 @@ h2 {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--secondary-text);
+    flex-wrap: wrap;
+    /* Allow wrapping on mobile */
+    gap: 10px;
+}
+
+.modal-header h3 {
+    margin-right: auto;
+    /* Push everything else to right */
+    white-space: nowrap;
+}
+
+.search-wrapper {
+    flex: 1;
+    /* Take up remaining space */
+    display: flex;
+    justify-content: flex-end;
+    /* Align search bar to right */
+    min-width: 200px;
+    /* Minimum width for search */
+}
+
+/* Mobile: Break to new line */
+@media (max-width: 500px) {
+    .search-wrapper {
+        order: 3;
+        /* Move to bottom */
+        width: 100%;
+        min-width: 100%;
+        margin-top: 15px;
+        justify-content: center;
+    }
+
+    .search-container {
+        max-width: 100%;
+        /* Full width on mobile */
+    }
+
+    .modal-header {
+        align-items: center;
+    }
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 8px 15px;
+    /* Smaller padding */
+    border: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+    /* Limit width on desktop */
+}
+
+[data-theme="dark"] .search-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: var(--secondary-text);
+}
+
+.search-container:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-icon {
+    color: var(--secondary-text);
+    margin-right: 10px;
+    font-size: 0.9rem;
+}
+
+#search-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    outline: none;
+    font-family: inherit;
+}
+
+#search-input::placeholder {
+    color: var(--secondary-text);
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* Pale Highlight */
+.highlight {
+    background-color: rgba(255, 94, 120, 0.4);
+    /* Pale Accent (Light Mode) */
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 4px;
+    font-weight: normal;
+    border-bottom: none;
+}
+
+[data-theme="dark"] .highlight {
+    background-color: rgba(123, 104, 238, 0.4);
+    /* Pale Accent (Dark Mode) */
+    border-bottom: none;
 }
 
 .playlist-items {

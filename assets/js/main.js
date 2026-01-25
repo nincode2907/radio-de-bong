@@ -37,6 +37,7 @@ const listBtn = document.getElementById('list-btn');
 const modal = document.getElementById('playlist-modal');
 const closeModal = document.getElementById('close-modal');
 const playlistContainer = document.getElementById('playlist-container');
+const searchInput = document.getElementById('search-input');
 const greetingEl = document.getElementById('greeting');
 const messageContainer = document.getElementById('message-container');
 const messageText = document.getElementById('message-text');
@@ -1039,6 +1040,10 @@ const modalOverlay = document.getElementById('modal-overlay');
 listBtn.addEventListener('click', () => {
     modal.classList.add('open');
     modalOverlay.classList.add('active');
+    // Focus search when opening
+    if (searchInput) {
+        setTimeout(() => searchInput.focus(), 300);
+    }
 });
 
 closeModal.addEventListener('click', () => {
@@ -1051,43 +1056,120 @@ modalOverlay.addEventListener('click', () => {
     modalOverlay.classList.remove('active');
 });
 
-function renderPlaylist() {
-    playlistContainer.innerHTML = '';
+// Search Logic
+function throttle(func, limit) {
+    let inThrottle;
+    return function () {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
 
-    // Create display order: current song first, then rest alphabetically
-    const displayOrder = [];
+if (searchInput) {
+    searchInput.addEventListener('input', throttle((e) => {
+        const query = e.target.value;
+        renderPlaylist(query);
+    }, 200));
+}
 
-    // Add currently playing song first
-    if (currentPlaylist[currentIndex]) {
-        displayOrder.push({ track: currentPlaylist[currentIndex], originalIndex: currentIndex });
+function highlightText(text, query) {
+    if (!query) return text;
+
+    // Normalize to find match positions regardless of accents
+    // This is tricky for exact highlighting of original text if lengths differ.
+    // Simple regex approach for Vietnamese:
+    // Construct regex from query where each char matches all its accent forms.
+
+    const accentMap = {
+        'a': '[aàáạảãâầấậẩẫăằắặẳẵAÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴ]',
+        'e': '[eèéẹẻẽêềếệểễEÈÉẸẺẼÊỀẾỆỂỄ]',
+        'i': '[iìíịỉĩIÌÍỊỈĨ]',
+        'o': '[oòóọỏõôồốộổỗơờớợởỡOÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]',
+        'u': '[uùúụủũưừứựửữUÙÚỤỦŨƯỪỨỰỬỮ]',
+        'y': '[yỳýỵỷỹYỲÝỴỶỸ]',
+        'd': '[dđDĐ]'
+    };
+
+    // Remove accents from query for mapping
+    const normalizedQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    let regexStr = '';
+    for (let char of normalizedQuery) {
+        // Escape special regex chars if any (though we normalized, but just in case)
+        if (/[.*+?^${}()|[\]\\]/.test(char)) {
+            regexStr += '\\' + char;
+        } else {
+            regexStr += accentMap[char] || char;
+        }
     }
 
-    // Add rest of songs (excluding current)
-    currentPlaylist.forEach((track, index) => {
-        if (index !== currentIndex) {
-            displayOrder.push({ track, originalIndex: index });
-        }
-    });
+    try {
+        const regex = new RegExp(`(${regexStr})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+    } catch (e) {
+        return text;
+    }
+}
 
-    displayOrder.forEach(({ track, originalIndex }) => {
+function renderPlaylist(filterText = '') {
+    playlistContainer.innerHTML = '';
+
+    let itemsToDisplay = [];
+    const normalize = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    if (filterText) {
+        // Filter Mode
+        const query = normalize(filterText);
+        itemsToDisplay = currentPlaylist.map((track, index) => ({ track, index }))
+            .filter(({ track }) => normalize(track.title).includes(query));
+    } else {
+        // Default Mode: Current song first, then rest
+        if (currentPlaylist[currentIndex]) {
+            itemsToDisplay.push({ track: currentPlaylist[currentIndex], index: currentIndex });
+        }
+        currentPlaylist.forEach((track, index) => {
+            if (index !== currentIndex) {
+                itemsToDisplay.push({ track, index });
+            }
+        });
+    }
+
+    if (itemsToDisplay.length === 0) {
+        playlistContainer.innerHTML = '<div style="text-align:center; color:var(--secondary-text); padding:20px;">Không tìm thấy bài hát nào 🥺</div>';
+        return;
+    }
+
+    itemsToDisplay.forEach(({ track, index }) => {
         const item = document.createElement('div');
         item.classList.add('playlist-item');
-        if (originalIndex === currentIndex) item.classList.add('active');
+        if (index === currentIndex) item.classList.add('active');
 
         const isFav = favorites.includes(track.id) ? '<i class="fas fa-heart" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
-        const nowPlaying = originalIndex === currentIndex ? '<i class="fas fa-volume-up" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
+        const nowPlaying = index === currentIndex ? '<i class="fas fa-volume-up" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
+
+        // Apply highlighting
+        const titleHtml = filterText ? highlightText(track.title, filterText) : track.title;
 
         item.innerHTML = `
             ${nowPlaying}${isFav}
-            <span>${track.title}</span>
+            <span>${titleHtml}</span>
         `;
 
+        // Use the ORIGINAL index to load the correct track!
         item.addEventListener('click', () => {
-            currentIndex = originalIndex;
+            currentIndex = index;
             loadTrack(currentIndex);
             playMusic();
             modal.classList.remove('open');
             modalOverlay.classList.remove('active');
+
+            // Clear search if we play a song? Optional. 
+            // User might want to keep searching. 
         });
 
         playlistContainer.appendChild(item);
@@ -1096,7 +1178,13 @@ function renderPlaylist() {
 
 function updateActivePlaylistItem() {
     // Re-render is simplest to ensuring styling update
-    renderPlaylist();
+    // Maintain search state? 
+    // If user is searching, and song changes, we should probably keep the search results but update active class.
+    // The renderPlaylist() takes args. If we call it without args, it resets.
+
+    // Check if search has value
+    const currentSearch = searchInput ? searchInput.value : '';
+    renderPlaylist(currentSearch);
 }
 
 // --- THEME ---
@@ -1314,8 +1402,30 @@ function resetDiskPosition(fromSide) {
 init();
 
 // Register Service Worker for PWA
+// Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker Registered'))
+        .then((registration) => {
+            console.log('Service Worker Registered');
+
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // New update available
+                        console.log('New update available!');
+                    }
+                });
+            });
+        })
         .catch((error) => console.log('Service Worker Registration Failed:', error));
+
+    // Auto-reload when new SW takes control
+    let refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+    });
 }

@@ -154,8 +154,15 @@
     <div class="modal" id="playlist-modal">
         <div class="modal-header">
             <h3>Danh sách bài hát</h3>
+            <div class="search-wrapper"> <!-- Wrapper for positioning -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Tìm kiếm...">
+                </div>
+            </div>
             <button class="btn" id="close-modal"><i class="fas fa-times"></i></button>
         </div>
+
 
         <div class="playlist-items" id="playlist-container">
             <!-- Items injected by JS -->
