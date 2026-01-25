@@ -1056,6 +1056,8 @@ modalOverlay.addEventListener('click', () => {
     modalOverlay.classList.remove('active');
 });
 
+const searchClearBtn = document.getElementById('search-clear-btn');
+
 // Search Logic
 function throttle(func, limit) {
     let inThrottle;
@@ -1074,7 +1076,27 @@ if (searchInput) {
     searchInput.addEventListener('input', throttle((e) => {
         const query = e.target.value;
         renderPlaylist(query);
+        toggleClearBtn(query);
     }, 200));
+}
+
+if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        searchInput.focus();
+        renderPlaylist('');
+        toggleClearBtn('');
+    });
+}
+
+function toggleClearBtn(query) {
+    if (searchClearBtn) {
+        if (query && query.length > 0) {
+            searchClearBtn.classList.add('show');
+        } else {
+            searchClearBtn.classList.remove('show');
+        }
+    }
 }
 
 function highlightText(text, query) {
