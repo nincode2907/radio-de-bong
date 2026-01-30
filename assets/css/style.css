@@ -1122,6 +1122,12 @@ h2 {
         opacity: 1;
         pointer-events: auto;
     }
+
+    /* Love Journey Mobile Adjustments */
+    .love-container {
+        margin-top: 50px;
+        /* Push down below icons */
+    }
 }
 
 /* Sleep Timer */
@@ -1248,4 +1254,358 @@ h2 {
 
 .repeat-badge i {
     font-size: 0.5rem;
+}
+
+/* --- LOVE JOURNEY SECTION --- */
+#love-section {
+    color: var(--text-color);
+}
+
+.love-container {
+    width: 100%;
+    max-width: 600px;
+    /* Wider for timeline */
+    background: var(--player-bg);
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: var(--player-shadow);
+    backdrop-filter: blur(20px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    /* For particles */
+}
+
+/* Header with Actions */
+.love-header-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.love-header-actions h2 {
+    color: #ff6b81;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.placeholder {
+    width: 24px;
+    /* Balance the layout */
+}
+
+/* Visuals */
+.love-visual {
+    margin: 20px 0;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.pulsing-heart {
+    font-size: 5rem;
+    animation: heartbeat 1.5s infinite;
+    text-shadow: 0 0 30px rgba(255, 107, 129, 0.4);
+}
+
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+
+    15% {
+        transform: scale(1.15);
+    }
+
+    30% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.15);
+    }
+
+    60% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Floating Particles */
+.floating-heart {
+    position: absolute;
+    bottom: -20px;
+    color: #ff6b81;
+    opacity: 0.8;
+    animation: floatUp linear forwards;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(-300px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.love-counter-container {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    min-height: 150px;
+    /* Prevent layout jump */
+    transition: opacity 0.2s ease;
+}
+
+/* Each Row = Value + Label */
+.time-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 15px;
+    border-radius: 10px;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.time-row:hover {
+    background: rgba(255, 107, 129, 0.1);
+    transform: scale(1.03);
+}
+
+/* Odometer Number */
+.odometer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff6b81;
+    font-family: 'Poppins', sans-serif;
+    display: inline-flex;
+    justify-content: center;
+}
+
+/* Individual Digit */
+.digit {
+    display: inline-block;
+    overflow: hidden;
+}
+
+/* Digit Roll Animation */
+.digit-roll {
+    animation: digitRoll 0.3s ease-out;
+}
+
+@keyframes digitRoll {
+    0% {
+        transform: translateY(30%);
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.unit-label {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* Single Unit View (Full Conversion) */
+.love-counter-single {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 150px;
+    /* Match normal view height */
+    transition: opacity 0.2s ease;
+}
+
+.odometer-big {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ff6b81;
+    font-family: 'Poppins', sans-serif;
+}
+
+.unit-label-big {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-top: 5px;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.love-quote {
+    font-style: italic;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+/* Timeline */
+.timeline-container {
+    text-align: left;
+    margin-top: 30px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+    /* Scrollbar space */
+}
+
+.timeline-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--secondary-color);
+    padding-bottom: 5px;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 20px;
+    border-left: 2px solid var(--secondary-color);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+    padding-left: 20px;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -32px;
+    top: 0;
+    background: var(--player-bg);
+    border: 2px solid #ff6b81;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    z-index: 2;
+}
+
+.timeline-content {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--secondary-color);
+}
+
+.timeline-content h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+    border: none;
+    padding: 0;
+}
+
+.timeline-date {
+    font-size: 0.75rem;
+    color: var(--secondary-text);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.timeline-content p {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .time-box {
+    background: rgba(255, 107, 129, 0.2);
+}
+
+[data-theme="dark"] .love-header-actions h2 {
+    color: #ff8fa3;
+}
+
+[data-theme="dark"] .time-box span {
+    color: #ff8fa3;
+}
+
+/* Create Scrollbar styles for timeline */
+.timeline-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 3px;
+}
+
+/* Modal Form Adjustment */
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--secondary-color);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-family: inherit;
+    outline: none;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group textarea {
+    height: 80px;
+    resize: none;
 }

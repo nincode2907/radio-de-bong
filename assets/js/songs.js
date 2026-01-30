@@ -168,6 +168,13 @@ const playlist = [
         type: 'chill',
         message: 'Người đầu tiên làm anh web tặng riêng thế này đấy. Cảm thấy VIP chưa? 👑'
     },
+    {
+        id: 48,
+        file: '48.mp3',
+        title: 'Từng Ngày Yêu Em - Bùi Tường Linh',
+        type: 'chill',
+        message: ''
+    },
 
 
     // --- LIST SUY (Nhạc buồn, tâm trạng) ---
@@ -322,6 +329,13 @@ const playlist = [
         id: 46,
         file: '46.mp3',
         title: 'Có Chàng Trai Viết Lên Cây - Phan Mạnh Quỳnh',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 47,
+        file: '47.mp3',
+        title: 'Hẹn Lần Sau - MAYDAYs',
         type: 'suy',
         message: ''
     },

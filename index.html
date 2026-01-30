@@ -38,6 +38,9 @@
         </div>
         <ul class="nav-list">
             <li class="nav-item active" data-target="player-section"><span class="nav-icon">🎵</span> Nghe Nhạc</li>
+            <li class="nav-item" id="love-nav-item" data-target="love-section" style="display: none; color: #ff6b81;">
+                <span class="nav-icon">💖</span> Hành Trình Tình Yêu
+            </li>
             <li class="nav-item" data-target="diary-section"><span class="nav-icon">📖</span> Nhật Ký Tâm Trạng</li>
             <li class="nav-item" id="lock-secret-btn" style="display: none; color: #ff6b6b;"><span
                     class="nav-icon">🔒</span> Khóa Lại</li>
@@ -147,6 +150,64 @@
                 </button>
             </div>
         </section>
+
+        <section id="love-section" class="content-section">
+            <div class="love-container">
+                <!-- Header (simpler, no add button) -->
+                <div class="love-header-actions">
+                    <h2>Hành Trình Tình Yêu</h2>
+                </div>
+
+                <!-- Heart Animation -->
+                <div class="love-visual">
+                    <div class="pulsing-heart">❤️</div>
+                </div>
+
+                <!-- Timer (Vertical Stack, Odometer Style) -->
+                <div class="love-counter-container" id="counter-normal-view">
+                    <div class="time-row" id="row-years" data-unit="years" style="display:none;">
+                        <span class="odometer" id="years">0</span>
+                        <span class="unit-label">Năm</span>
+                    </div>
+                    <div class="time-row" id="row-months" data-unit="months" style="display:none;">
+                        <span class="odometer" id="months">0</span>
+                        <span class="unit-label">Tháng</span>
+                    </div>
+                    <div class="time-row" id="row-days" data-unit="days" style="display:none;">
+                        <span class="odometer" id="days">0</span>
+                        <span class="unit-label">Ngày</span>
+                    </div>
+                    <div class="time-row" id="row-hours" data-unit="hours">
+                        <span class="odometer" id="hours">0</span>
+                        <span class="unit-label">Giờ</span>
+                    </div>
+                    <div class="time-row" id="row-minutes" data-unit="minutes">
+                        <span class="odometer" id="minutes">0</span>
+                        <span class="unit-label">Phút</span>
+                    </div>
+                    <div class="time-row" id="row-seconds" data-unit="seconds">
+                        <span class="odometer" id="seconds">0</span>
+                        <span class="unit-label">Giây</span>
+                    </div>
+                </div>
+
+                <!-- Single Unit View (for click to convert) -->
+                <div class="love-counter-single" id="counter-single-view" style="display:none;">
+                    <span class="odometer-big" id="single-value">0</span>
+                    <span class="unit-label-big" id="single-unit">Phút</span>
+                </div>
+
+                <p class="love-quote">Mỗi giây bên nhau đều đáng trân trọng em nhé</p>
+
+                <!-- Timeline -->
+                <div class="timeline-container">
+                    <h3>Dòng Thời Gian</h3>
+                    <div class="timeline" id="love-timeline">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div class="modal-overlay" id="modal-overlay"></div>
@@ -187,7 +248,10 @@
         </div>
     </div>
 
+
+
     <!-- Load Playlist Data -->
+    <script src="assets/js/love-journey.js"></script>
     <script src="assets/js/songs.js"></script>
     <script src="assets/js/diary.js"></script>
     <script src="assets/js/main.js"></script>

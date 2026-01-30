@@ -256,7 +256,13 @@ function unlockSecretFeatures(showAlert = true) {
 
     // Reveal Hidden Features
     document.querySelector('.nav-item[data-target="diary-section"]').style.display = 'flex';
+    document.getElementById('love-nav-item').style.display = 'flex'; // Unlock Love Journey
     document.getElementById('lock-secret-btn').style.display = 'flex';
+
+    // Init Love Journey if available
+    if (window.initLoveJourney) {
+        window.initLoveJourney();
+    }
 
     // Switch to Diary if auto?
     if (!showAlert) {
