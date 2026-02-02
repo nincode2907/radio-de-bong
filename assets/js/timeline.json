@@ -1,9 +1,58 @@
 [
     {
         "id": 1,
+        "title": "Match nhau trên Facebook",
+        "date": "2026-01-14T13:07:00",
+        "desc": "Cây xương rồng gặp cô giáo hoa nhỏ!",
+        "image": "",
+        "icon": "❤️"
+    },
+    {
+        "id": 2,
+        "title": "Chào bé Thơ",
+        "date": "2026-01-14T20:00:00",
+        "desc": "Soi tường cô giáo, buổi nhắn tin đầu tiên",
+        "image": "",
+        "icon": "💕"
+    },
+    {
+        "id": 5,
+        "title": "First Date",
+        "date": "2026-01-18T18:30:00",
+        "desc": "Buổi hẹn hò đầu tiên của 2 đứa ở cà phê rooftop.",
+        "image": "assets/images/timelines/first_date.jpg",
+        "icon": "🌹"
+    },
+    {
+        "id": 6,
+        "title": "Buổi xem phim đầu tiên",
+        "date": "2026-01-31T08:30:00",
+        "desc": "Qua gửi xe nhà em, gặp anh chị, anh 2 thắc mắc hỏi ai z, em quíu hah. Xong đi mua bánh kebab, qua Phúc Long ngồi chill. Xem phim Thiên Đường Máu anh bao rạp😎. Hôn trán, đi ăn cơm niêu Singapore gia đình. Về em vào trước, anh vào sau gặp ba kkk.",
+        "image": "assets/images/timelines/official.jpg",
+        "icon": "🎬"
+    },
+    {
+        "id": 7,
+        "title": "Pookie",
+        "date": "2026-02-02T11:30:00",
+        "desc": "Nay cô giáo nghĩ ra biệt danh cưng thật sự Big Pookie❤️💪🏻. Nên a gọi cô giáo là Baby Pookie❤️🎀. 1 cặp nhé!",
+        "image": "assets/images/timelines/pookie.jpg",
+        "icon": "💕"
+    },
+    {
+        "id": 3,
         "title": "Chính thức yêu nhau",
         "date": "2026-01-30T07:59:00",
         "desc": "Em đồng ý làm người yêu anh. Hành trình chính thức bắt đầu!",
-        "icon": "❤️"
+        "image": "",
+        "icon": "💕"
+    },
+    {
+        "id": 8,
+        "title": "Ra mắt trạm chữa lành của Dê Bông🐏",
+        "date": "2026-01-21T14:23:00",
+        "desc": "Anh chuẩn bị cho Dê Bông với anh cái trạm nghe nhạc, có thể nâng cấp lên nhiều cái trong này!",
+        "image": "assets/images/timelines/radio.jpg",
+        "icon": "🎁"
     }
 ]

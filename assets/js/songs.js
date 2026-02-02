@@ -159,7 +159,7 @@ const playlist = [
         file: '44.mp3',
         title: 'Lửa Gần Rơm - Quân A.P',
         type: 'chill',
-        message: ''
+        message: 'Bén liền bé iu ơi'
     },
     {
         id: 8,
@@ -172,6 +172,27 @@ const playlist = [
         id: 48,
         file: '48.mp3',
         title: 'Từng Ngày Yêu Em - Bùi Tường Linh',
+        type: 'chill',
+        message: 'Từng giây yêu em luôn nha'
+    },
+    {
+        id: 49,
+        file: '49.mp3',
+        title: 'Em Là Bà Nội Của Anh - Trọng Hiếu ft. Tăng Nhật Tuệ',
+        type: 'chill',
+        message: 'Chuẩn không cần chỉnh!'
+    },
+    {
+        id: 50,
+        file: '50.mp3',
+        title: 'Hoa Và Váy - Quốc Thiên',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 51,
+        file: '51.mp3',
+        title: 'Đại Hải Trình',
         type: 'chill',
         message: ''
     },

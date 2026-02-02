@@ -1,5 +1,5 @@
 // CONFIGURATION
-const totalImages = 3;
+const totalImages = 5;
 const ENCRYPTED_CONTENT = 'U2FsdGVkX19ldi6C3f2YMmhX4kd83cffq5pckLdF4qT/LNMkdjmvDK9U9pUvvdpp2Lwp2zymf0UJJKV1Xa/g8g==';
 
 // STATE
@@ -8,6 +8,9 @@ let isPlaying = false;
 let isShuffle = false;
 let isRepeat = 'off'; // 'off', 'one', 'favorites'
 let favorites = JSON.parse(localStorage.getItem('babe_favs')) || [];
+let shufflePlayedIndices = []; // Track played songs in shuffle mode
+let playbackHistory = []; // Stack to track history for "Back" button in shuffle mode
+let showFavoritesOnly = false; // Filter for favorites in playlist
 
 
 // Playlist Management
@@ -214,6 +217,15 @@ function closePasswordModal() {
 if (unlockBtn) {
     unlockBtn.addEventListener('click', checkPassword);
     closePassModalBtn.addEventListener('click', closePasswordModal);
+
+    // Enter key support for password input
+    if (secretInput) {
+        secretInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    }
 }
 if (lockSecretBtn) {
     lockSecretBtn.addEventListener('click', lockSecretMode);
@@ -318,6 +330,12 @@ function switchSection(targetId) {
         section.style.display = 'none';
     });
 
+    // Hide Add Memory button when switching away from timeline
+    const addMemoryBtn = document.getElementById('add-memory-btn');
+    if (addMemoryBtn) {
+        addMemoryBtn.classList.remove('visible');
+    }
+
     const targetSection = document.getElementById(targetId);
     if (targetSection) {
         targetSection.style.display = 'flex';
@@ -329,10 +347,10 @@ function switchSection(targetId) {
 
 // --- DIARY LOGIC ---
 const moodPlaceholders = {
-    'vui': "Có chuyện gì vui kể anh nghe chung vui với!",
+    'vui': "Nay có chuyện gì vui kể anh nghe chung vui với!",
     'buon': "Ai làm bé buồn? Kể đi anh thương.",
-    'gian': "Đứa nào chọc điên cô giáo? Khai tên để anh xử!",
-    'nho': "Nhớ nhiều không? Để anh phi trâu qua liền?",
+    'gian': "Đứa nào chọc điên cô giáo? Khai tên anh hack fb luôn!",
+    'nho': "Nhớ nhiều không? Để anh phi qua liền?",
     'met': "Vất vả rồi. Muốn ăn gì hay muốn ôm cái nào?"
 };
 
@@ -372,7 +390,7 @@ function setupDiaryEvents() {
 
             // Success UI
             diaryContent.value = "";
-            alert("Đã gửi đến anh thành công! 🥰");
+            alert("Đã gửi đến anh yêu 🥰");
         } catch (error) {
             console.error(error);
             alert("Lỗi rồi do đường truyền đến bị yếu nhá, bé đợi xíu nữa hoặc gọi anh nhé");
@@ -490,11 +508,11 @@ function showGreeting() {
     const hour = new Date().getHours();
     let greeting = "";
     if (hour >= 4 && hour < 5) greeting = "Dậy sớm thế cô giáo? Cho phép mơ thấy anh để ngủ ngon lại đó ☕";
-    else if (hour >= 5 && hour < 12) greeting = "Buổi sáng hảo bé nha! ☀️ Nạp năng lượng đi nào.";
+    else if (hour >= 5 && hour < 12) greeting = "Buổi sáng hảo nha bé! ☀️ Nạp năng lượng đi nào.";
     else if (hour >= 12 && hour < 14) greeting = "Trưa rồi, bé ăn uống đầy đủ rồi ngủ sớm nha! 🍚";
     else if (hour >= 14 && hour < 18) greeting = "Chiều dạy vui nha cô giáo! ☕";
-    else if (hour >= 18 && hour < 22) greeting = "Tối ấm áp! Thư giãn xíu đi nè. Anh về với bé giờ 🍵";
-    else greeting = "Khuya rồi, nghe nhạc xíu rồi ngủ ngoan nha. 🌙";
+    else if (hour >= 18 && hour < 22) greeting = "Tối chill chill 🍵";
+    else greeting = "Khuya rồi, nghe nhạc xíu rồi ôm anh ngủ nha. 🌙";
 
     greetingEl.innerText = greeting;
     setTimeout(() => {
@@ -523,6 +541,8 @@ function loadTrack(index) {
     audio.load();
 
     titleEl.textContent = track.title;
+    // Set Document Title
+    document.title = `${track.title} 🎵`;
 
     // Message Logic
     if (track.message) {
@@ -641,6 +661,10 @@ function playMusic() {
     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
     disk.style.animationPlayState = 'running';
 
+    // Update Document Title
+    const currentTrack = currentPlaylist[currentIndex];
+    if (currentTrack) document.title = `${currentTrack.title} 🎵`;
+
     // Fade in effect (desktop only)
     if (!isMobile) {
         audio.volume = 0;
@@ -688,6 +712,8 @@ function pauseMusic() {
     isPlaying = false;
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
     disk.style.animationPlayState = 'paused';
+    // Revert Document Title
+    document.title = 'TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋';
 
     // Mobile: pause immediately
     if (isMobile) {
@@ -767,6 +793,37 @@ function fadeAudio(direction, callback) {
     }
 }
 
+// Get next shuffle index without repeating until all songs played
+function getNextShuffleIndex() {
+    // Add current index to played list if not already there
+    if (!shufflePlayedIndices.includes(currentIndex)) {
+        shufflePlayedIndices.push(currentIndex);
+    }
+
+    // Get available indices (not yet played)
+    const availableIndices = [];
+    for (let i = 0; i < currentPlaylist.length; i++) {
+        if (!shufflePlayedIndices.includes(i)) {
+            availableIndices.push(i);
+        }
+    }
+
+    // If all songs played, reset history but exclude current to avoid immediate repeat
+    if (availableIndices.length === 0) {
+        shufflePlayedIndices = [currentIndex];
+        for (let i = 0; i < currentPlaylist.length; i++) {
+            if (i !== currentIndex) availableIndices.push(i);
+        }
+    }
+
+    // Pick random from available
+    if (availableIndices.length === 0) return currentIndex; // Only 1 song
+    const randomIdx = Math.floor(Math.random() * availableIndices.length);
+    const newIndex = availableIndices[randomIdx];
+    shufflePlayedIndices.push(newIndex);
+    return newIndex;
+}
+
 function nextTrack() {
     // If in favorites repeat mode, navigate within favorites
     if (isRepeat === 'favorites' && favorites.length > 0) {
@@ -777,11 +834,9 @@ function nextTrack() {
     // For mobile: switch track immediately to respond to user gesture
     if (isMobile) {
         if (isShuffle) {
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * currentPlaylist.length);
-            } while (newIndex === currentIndex && currentPlaylist.length > 1);
-            currentIndex = newIndex;
+            // Push current song to history before moving to next
+            playbackHistory.push(currentIndex);
+            currentIndex = getNextShuffleIndex();
         } else {
             currentIndex++;
             if (currentIndex >= currentPlaylist.length) currentIndex = 0;
@@ -794,11 +849,9 @@ function nextTrack() {
     // Desktop: Fade out then switch
     fadeAudio('out', () => {
         if (isShuffle) {
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * currentPlaylist.length);
-            } while (newIndex === currentIndex && currentPlaylist.length > 1);
-            currentIndex = newIndex;
+            // Push current song to history before moving to next
+            playbackHistory.push(currentIndex);
+            currentIndex = getNextShuffleIndex();
         } else {
             currentIndex++;
             if (currentIndex >= currentPlaylist.length) currentIndex = 0;
@@ -817,8 +870,13 @@ function prevTrack() {
 
     // For mobile: switch track immediately
     if (isMobile) {
-        currentIndex--;
-        if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        if (isShuffle && playbackHistory.length > 0) {
+            // Go back in history
+            currentIndex = playbackHistory.pop();
+        } else {
+            currentIndex--;
+            if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        }
         loadTrack(currentIndex);
         playMusic();
         return;
@@ -826,8 +884,13 @@ function prevTrack() {
 
     // Desktop: Fade out then switch
     fadeAudio('out', () => {
-        currentIndex--;
-        if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        if (isShuffle && playbackHistory.length > 0) {
+            // Go back in history
+            currentIndex = playbackHistory.pop();
+        } else {
+            currentIndex--;
+            if (currentIndex < 0) currentIndex = currentPlaylist.length - 1;
+        }
         loadTrack(currentIndex);
         playMusic();
     });
@@ -1095,6 +1158,28 @@ if (searchClearBtn) {
     });
 }
 
+// Favorites Filter Toggle
+const favFilterBtn = document.getElementById('fav-filter-btn');
+if (favFilterBtn) {
+    favFilterBtn.addEventListener('click', () => {
+        showFavoritesOnly = !showFavoritesOnly;
+        shufflePlayedIndices = []; // Reset shuffle history when toggling
+
+        // Update button appearance
+        if (showFavoritesOnly) {
+            favFilterBtn.classList.add('active');
+            favFilterBtn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+            favFilterBtn.classList.remove('active');
+            favFilterBtn.innerHTML = '<i class="far fa-heart"></i>';
+        }
+
+        // Re-render with current search
+        const currentSearch = searchInput ? searchInput.value : '';
+        renderPlaylist(currentSearch);
+    });
+}
+
 function toggleClearBtn(query) {
     if (searchClearBtn) {
         if (query && query.length > 0) {
@@ -1144,27 +1229,73 @@ function highlightText(text, query) {
     }
 }
 
+// Helper function to convert text to Title Case
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/(?:^|\s|-)\S/g, char => char.toUpperCase());
+}
+
 function renderPlaylist(filterText = '') {
     playlistContainer.innerHTML = '';
 
     let itemsToDisplay = [];
     const normalize = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+    // Start with current playlist or filter by favorites
+    let sourceList = currentPlaylist.map((track, index) => ({ track, index }));
+
+    // Filter by favorites if showFavoritesOnly is active
+    if (showFavoritesOnly) {
+        sourceList = sourceList.filter(({ track }) => favorites.includes(track.id));
+
+        // Show cute message if no favorites
+        if (sourceList.length === 0) {
+            playlistContainer.innerHTML = '<div style="text-align:center; color:var(--secondary-text); padding:30px 20px;"><div style="font-size:2rem; margin-bottom:10px;">💔</div>Bé chưa chọn bài tủ nào nè, thả tim đi rồi quay lại nha!</div>';
+            return;
+        }
+    }
+
     if (filterText) {
         // Filter Mode
         const query = normalize(filterText);
-        itemsToDisplay = currentPlaylist.map((track, index) => ({ track, index }))
-            .filter(({ track }) => normalize(track.title).includes(query));
+        itemsToDisplay = sourceList.filter(({ track }) => normalize(track.title).includes(query));
     } else {
         // Default Mode: Current song first, then rest
-        if (currentPlaylist[currentIndex]) {
-            itemsToDisplay.push({ track: currentPlaylist[currentIndex], index: currentIndex });
+        const currentItem = sourceList.find(({ index }) => index === currentIndex);
+        if (currentItem) {
+            itemsToDisplay.push(currentItem);
         }
-        currentPlaylist.forEach((track, index) => {
-            if (index !== currentIndex) {
-                itemsToDisplay.push({ track, index });
+        sourceList.forEach(item => {
+            if (item.index !== currentIndex) {
+                itemsToDisplay.push(item);
             }
         });
+    }
+
+    // Update playlist count in header with odometer animation
+    const playlistCountEl = document.getElementById('playlist-count');
+    if (playlistCountEl) {
+        const newCount = itemsToDisplay.length;
+        const newStr = String(newCount);
+        const oldText = playlistCountEl.dataset.count || '';
+
+        if (newStr !== oldText) {
+            // Build per-digit HTML with animation
+            let html = '(';
+            for (let i = 0; i < newStr.length; i++) {
+                const newDigit = newStr[i];
+                const oldDigit = oldText[i] || '';
+
+                if (newDigit !== oldDigit) {
+                    html += `<span class="digit digit-roll">${newDigit}</span>`;
+                } else {
+                    html += `<span class="digit">${newDigit}</span>`;
+                }
+            }
+            html += ')';
+
+            playlistCountEl.innerHTML = html;
+            playlistCountEl.dataset.count = newStr;
+        }
     }
 
     if (itemsToDisplay.length === 0) {
@@ -1180,8 +1311,9 @@ function renderPlaylist(filterText = '') {
         const isFav = favorites.includes(track.id) ? '<i class="fas fa-heart" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
         const nowPlaying = index === currentIndex ? '<i class="fas fa-volume-up" style="color:var(--accent-color); margin-right:8px;"></i>' : '';
 
-        // Apply highlighting
-        const titleHtml = filterText ? highlightText(track.title, filterText) : track.title;
+        // Apply highlighting and Title Case
+        let displayTitle = toTitleCase(track.title);
+        const titleHtml = filterText ? highlightText(displayTitle, filterText) : displayTitle;
 
         item.innerHTML = `
             ${nowPlaying}${isFav}

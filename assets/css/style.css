@@ -443,6 +443,7 @@ body {
     position: absolute;
     top: 15px;
     right: 20px;
+    /* Moved left to avoid scrollbar overlap */
     z-index: 100;
 }
 
@@ -818,6 +819,40 @@ h2 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
+.fav-filter-btn {
+    margin-right: 10px;
+    font-size: 1.1rem;
+    color: var(--secondary-text);
+    transition: all 0.2s ease;
+}
+
+.fav-filter-btn:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+.fav-filter-btn.active {
+    color: var(--accent-color);
+}
+
+.fav-filter-btn.active i {
+    animation: heartPop 0.3s ease;
+}
+
+@keyframes heartPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 .search-icon {
     color: var(--secondary-text);
     margin-right: 10px;
@@ -911,6 +946,7 @@ h2 {
 .playlist-item span {
     margin-left: 10px;
     font-size: 0.9rem;
+    text-transform: capitalize;
 }
 
 /* Greeting & Dream Message */
@@ -1608,4 +1644,760 @@ h2 {
 .form-group textarea {
     height: 80px;
     resize: none;
+}
+
+/* ============================================
+   TIMELINE FULLPAGE STYLES
+   ============================================ */
+
+/* Scroll Hint Arrow */
+.timeline-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding: 20px;
+}
+
+.scroll-arrow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.scroll-arrow-container:hover {
+    transform: translateY(5px);
+}
+
+.scroll-arrow {
+    font-size: 1.8rem;
+    animation: bounceArrow 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceArrow {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+}
+
+.scroll-arrow-container span {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Play Journey Button */
+.play-journey-btn {
+    background: linear-gradient(135deg, var(--accent-color), #ff8fa3);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 94, 120, 0.3);
+    transition: all 0.3s ease;
+}
+
+.play-journey-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 94, 120, 0.4);
+}
+
+.play-journey-btn i {
+    font-size: 0.85rem;
+}
+
+/* Timeline Fullpage Section */
+.timeline-fullpage {
+    display: none;
+    width: 100%;
+    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 80px 20px 40px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    z-index: 1000;
+    /* High z-index to cover everything including switch mode */
+}
+
+.timeline-fullpage.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Back Arrow - Always Fixed and Visible */
+.timeline-back-arrow {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--player-bg);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s ease;
+    color: var(--accent-color);
+    font-size: 1.2rem;
+}
+
+.timeline-fullpage.visible .timeline-back-arrow {
+    display: flex;
+}
+
+.timeline-back-arrow:hover {
+    transform: translateX(-50%) translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-back-arrow i {
+    animation: bounceArrowUp 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceArrowUp {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Timeline Container */
+.timeline-full-container {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 0;
+    /* Reset padding to handle spacing manually in items */
+}
+
+.timeline-full-container h2 {
+    text-align: center;
+    color: var(--accent-color);
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+    padding-left: 0;
+}
+
+.timeline-title-icon {
+    display: inline-block;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* SVG Path for timeline line */
+.timeline-svg-path {
+    position: absolute;
+    left: 110px;
+    /* Center Axis */
+    top: 80px;
+    width: 4px;
+    height: calc(100% - 100px);
+    z-index: 0;
+}
+
+.timeline-line-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawPath 2s ease forwards;
+}
+
+@keyframes drawPath {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Timeline Full Content */
+.timeline-full {
+    position: relative;
+    z-index: 1;
+}
+
+/* Timeline Card */
+.timeline-card {
+    position: relative;
+    margin-bottom: 20px;
+    /* Reduced from 40px */
+    padding-left: 0;
+    /* Reset padding */
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
+    /* Gap between Time+Spacer and Content */
+}
+
+.timeline-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Time display on left side */
+.timeline-card-time-left {
+    flex-shrink: 0;
+    width: 90px;
+    /* Fixed width */
+    text-align: right;
+    padding-top: 18px;
+    font-size: 0.75rem;
+    color: var(--secondary-text);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-right: 46px;
+    /* Space for icon */
+}
+
+.timeline-card-time-left .time-date {
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.timeline-card-time-left .time-hour {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.timeline-card-icon {
+    position: absolute;
+    left: 96px;
+    /* 90px time + spacing */
+    top: 12px;
+    width: 34px;
+    height: 34px;
+    background: var(--player-bg);
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    z-index: 2;
+    animation: pulseIcon 2s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 94, 120, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(255, 94, 120, 0);
+    }
+}
+
+/* Card Flipper Container */
+.timeline-card-flipper {
+    position: relative;
+    width: 100%;
+    min-height: 140px;
+    /* Transition adjustments for smoother back-and-forth */
+    transition: transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+        min-height 1.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+        aspect-ratio 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+/* When flipped - transition to square aspect ratio (like PowerPoint shade mode) */
+.timeline-card.flipped .timeline-card-flipper {
+    transform: rotateY(180deg);
+    aspect-ratio: 1 / 1;
+    min-height: auto;
+    max-height: 400px;
+}
+
+/* Back card adjusts for square */
+.timeline-card.flipped .timeline-card-back {
+    height: 100%;
+}
+
+.timeline-card.flipped .timeline-card-back img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* Shake Animation */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+.timeline-card.shake .timeline-card-flipper {
+    animation: shake 0.5s ease;
+}
+
+/* Card Front */
+.timeline-card-front {
+    position: relative;
+    width: 100%;
+    backface-visibility: hidden;
+    background: var(--player-bg);
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.timeline-card-front:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Card Back - Shows Image */
+.timeline-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    background: var(--player-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--secondary-color);
+}
+
+.timeline-card-back img {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+}
+
+/* Date - Hidden inside card (moved to left side) */
+.timeline-card-date {
+    display: none;
+}
+
+.timeline-card-front h3 {
+    color: var(--text-color);
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.timeline-card-front p {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Tap Hint */
+.timeline-card-hint {
+    display: none;
+    /* User requested removal */
+}
+
+.timeline-card-image {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .timeline-card-content {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .timeline-card-content:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .timeline-back-arrow {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .timeline-fullpage {
+        padding: 80px 10px 40px;
+    }
+
+    .timeline-full-container {
+        padding-left: 0;
+    }
+
+    .timeline-svg-path {
+        left: 30px;
+        /* Fixed line position */
+    }
+
+    .timeline-card {
+        flex-direction: column;
+        padding-left: 60px;
+        /* Clear the line */
+        margin-bottom: 20px;
+    }
+
+    .timeline-card-time-left {
+        width: 100%;
+        text-align: left;
+        padding-top: 0;
+        padding-bottom: 5px;
+        flex-direction: row;
+        gap: 10px;
+        margin-right: 0;
+        align-items: center;
+    }
+
+    .timeline-card-time-left .time-date {
+        font-size: 0.8rem;
+    }
+
+    .timeline-card-icon {
+        left: 13px;
+        /* Center at 30px (30 - 17 = 13) */
+        top: 40px;
+        /* Adjust vertical alignment */
+        width: 34px;
+        height: 34px;
+        font-size: 0.9rem;
+    }
+
+    .timeline-card-content {
+        padding: 15px;
+    }
+
+    .timeline-back-arrow {
+        width: 40px;
+        height: 40px;
+        top: 15px;
+    }
+
+    .play-journey-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Back to Top Button */
+.timeline-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 45px;
+    width: 45px;
+    height: 45px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.timeline-to-top.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+}
+
+.timeline-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Add Memory Button */
+.add-memory-btn {
+    position: fixed;
+    bottom: 30px;
+    left: calc(260px + 75px);
+    /* Account for sidebar width on desktop */
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: none;
+    /* Hidden by default, shown via JS */
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(255, 107, 129, 0.4);
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.add-memory-btn.visible {
+    display: flex;
+}
+
+.add-memory-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 25px rgba(255, 107, 129, 0.5);
+}
+
+/* Add Memory Modal */
+.add-memory-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.add-memory-modal.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.add-memory-modal-content {
+    background: var(--player-bg);
+    width: 90%;
+    max-width: 450px;
+    border-radius: 25px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.add-memory-modal.open .add-memory-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.add-memory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+    color: white;
+}
+
+.add-memory-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.add-memory-header .btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-memory-header .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+#add-memory-form {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.2);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.submit-memory-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
+}
+
+.submit-memory-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 129, 0.4);
+}
+
+.submit-memory-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .add-memory-btn {
+        bottom: 20px;
+        left: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+
+    .add-memory-modal-content {
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    #add-memory-form {
+        padding: 20px;
+    }
+}
+
+/* =========================================
+   IMMERSIVE MODE (Timeline Playback)
+   ========================================= */
+body.immersive-mode .sidebar-toggle,
+body.immersive-mode .add-memory-btn,
+body.immersive-mode .back-to-top,
+body.immersive-mode .theme-switch-wrapper,
+body.immersive-mode #sidebar {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: all 0.5s ease !important;
+}
+
+/* Move elements slightly for effect */
+body.immersive-mode .sidebar-toggle,
+body.immersive-mode .theme-switch-wrapper {
+    transform: translateY(-20px);
+}
+
+body.immersive-mode .add-memory-btn,
+body.immersive-mode .back-to-top {
+    transform: translateY(20px) scale(0.8);
+}
+
+/* Ensure sidebar stays hidden */
+body.immersive-mode #sidebar.open {
+    transform: translateX(-100%);
 }

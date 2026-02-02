@@ -199,23 +199,98 @@
 
                 <p class="love-quote">Mỗi giây bên nhau đều đáng trân trọng em nhé</p>
 
-                <!-- Timeline -->
-                <div class="timeline-container">
-                    <h3>Dòng Thời Gian</h3>
-                    <div class="timeline" id="love-timeline">
-                        <!-- Items injected by JS -->
+                <!-- Scroll Hint Arrow -->
+                <div class="timeline-scroll-hint" id="timeline-scroll-hint">
+                    <button class="play-journey-btn" id="play-journey-btn">
+                        <i class="fas fa-play"></i> Bắt đầu xem
+                    </button>
+                    <div class="scroll-arrow-container" id="scroll-to-timeline">
+                        <span>Dòng Thời Gian</span>
+                        <i class="fas fa-chevron-down scroll-arrow"></i>
                     </div>
                 </div>
             </div>
+
+            <!-- Timeline Full Page Section -->
+            <div class="timeline-fullpage" id="timeline-fullpage">
+                <div class="timeline-back-arrow" id="timeline-back">
+                    <i class="fas fa-chevron-up"></i>
+                </div>
+                <div class="timeline-full-container">
+                    <h2><span class="timeline-title-icon">💕</span> Hành trình của tụi mình</h2>
+                    <!-- SVG Path for timeline line (path draw animation) -->
+                    <svg class="timeline-svg-path" id="timeline-svg" viewBox="0 0 4 1000" preserveAspectRatio="none">
+                        <path class="timeline-line-path" d="M2 0 L2 1000" stroke="var(--accent-color)" stroke-width="4"
+                            fill="none" />
+                    </svg>
+                    <div class="timeline-full" id="timeline-full-content">
+                        <!-- Cards injected by JS with lazy loading -->
+                    </div>
+                </div>
+            </div>
+            <button id="timeline-to-top" class="timeline-to-top" title="Lên đầu trang"><i
+                    class="fas fa-chevron-up"></i></button>
         </section>
+    </div>
+
+    <!-- Add Memory Button (outside main-content for proper fixed positioning) -->
+    <button id="add-memory-btn" class="add-memory-btn" title="Thêm Kỷ Niệm">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Add Memory Modal -->
+    <div class="add-memory-modal" id="add-memory-modal">
+        <div class="add-memory-modal-content">
+            <div class="add-memory-header">
+                <h3>💝 Thêm Kỷ Niệm</h3>
+                <button class="btn" id="close-memory-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-memory-form">
+                <div class="form-group">
+                    <label for="memory-title">Tiêu đề *</label>
+                    <input type="text" id="memory-title" placeholder="Ví dụ: Buổi hẹn hò đầu tiên" required>
+                </div>
+                <div class="form-group">
+                    <label for="memory-date">Ngày giờ *</label>
+                    <input type="datetime-local" id="memory-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="memory-desc">Mô tả</label>
+                    <textarea id="memory-desc" rows="3" placeholder="Kể lại kỷ niệm này nha..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="memory-icon">Icon</label>
+                        <select id="memory-icon">
+                            <option value="❤️">❤️ Trái tim</option>
+                            <option value="💕">💕 Yêu thương</option>
+                            <option value="🎉">🎉 Tiệc tùng</option>
+                            <option value="✈️">✈️ Du lịch</option>
+                            <option value="🎂">🎂 Sinh nhật</option>
+                            <option value="🌹">🌹 Hoa hồng</option>
+                            <option value="🎬">🎬 Phim</option>
+                            <option value="🍽️">🍽️ Ăn uống</option>
+                            <option value="🎁">🎁 Quà tặng</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="submit-memory-btn" id="submit-memory-btn">
+                    <i class="fas fa-paper-plane"></i> Gửi Kỷ Niệm
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="modal-overlay" id="modal-overlay"></div>
 
     <div class="modal" id="playlist-modal">
         <div class="modal-header">
-            <h3>Danh sách bài hát</h3>
+            <h3>Danh sách bài hát <span id="playlist-count"
+                    style="font-weight: normal; opacity: 0.7; display: inline-flex; align-items: baseline;"></span></h3>
             <div class="search-wrapper"> <!-- Wrapper for positioning -->
+                <button class="btn fav-filter-btn" id="fav-filter-btn" title="Chỉ hiện yêu thích">
+                    <i class="far fa-heart"></i>
+                </button>
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="search-input" placeholder="Tìm kiếm...">
