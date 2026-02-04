@@ -307,7 +307,10 @@ function renderTimelineFullpage(events) {
                     ${tapHint}
                 </div>
                 <div class="timeline-card-back">
-                    ${imageUrl ? `<img src="${imageUrl}" alt="${event.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\\'padding:40px;text-align:center;color:var(--secondary-text)\\'>Không tải được ảnh 😢</div>'">` : ''}
+                    ${imageUrl ? `
+                        <img src="${imageUrl}" alt="${event.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\\'padding:40px;text-align:center;color:var(--secondary-text)\\'>Không tải được ảnh 😢</div>'">
+                        <div class="timeline-card-zoom-icon" title="Xem ảnh đầy đủ"><i class="fas fa-search-plus"></i></div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -322,6 +325,17 @@ function renderTimelineFullpage(events) {
                 setTimeout(() => card.classList.remove('shake'), 500);
             }
         });
+
+        // Add Lightbox trigger for zoom icon ONLY
+        const zoomIcon = card.querySelector('.timeline-card-zoom-icon');
+        const img = card.querySelector('.timeline-card-back img');
+
+        if (zoomIcon && img) {
+            zoomIcon.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card from flipping back
+                openLightbox(img.src);
+            });
+        }
 
         timelineFullContent.appendChild(card);
     });
@@ -491,7 +505,7 @@ function startPlayJourney() {
                 setTimeout(() => {
                     if (!isAutoScrolling) return;
                     card.classList.add('flipped');
-                }, 1500);
+                }, 2500);
 
                 // Unflip after viewing image
                 setTimeout(() => {
@@ -686,12 +700,62 @@ ${jsonText}
     }
 }
 
+// --- LIGHTBOX FEATURE ---
+function setupLightbox() {
+    const lightboxOverlay = document.getElementById('lightbox-overlay');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxContent = document.querySelector('.lightbox-content');
+
+    if (!lightboxOverlay) return;
+
+    // Close logic
+    function closeLightbox() {
+        lightboxOverlay.classList.remove('visible');
+        setTimeout(() => {
+            lightboxOverlay.style.display = 'none';
+            document.getElementById('lightbox-img').src = '';
+        }, 300);
+    }
+
+    // Close on overlay click
+    lightboxOverlay.addEventListener('click', (e) => {
+        if (e.target === lightboxOverlay) closeLightbox();
+    });
+
+    // Close on X button
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightboxOverlay.classList.contains('visible')) {
+            closeLightbox();
+        }
+    });
+}
+
+function openLightbox(imageUrl) {
+    const lightboxOverlay = document.getElementById('lightbox-overlay');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    if (!lightboxOverlay || !lightboxImg) return;
+
+    lightboxImg.src = imageUrl;
+    lightboxOverlay.style.display = 'flex';
+    // Force reflow
+    void lightboxOverlay.offsetWidth;
+    lightboxOverlay.classList.add('visible');
+}
+
+
 // --- INIT ---
 function initLoveJourney() {
     startCounter();
     loadTimeline();
     setupClickToConvert();
     setupAddMemory();
+    setupLightbox(); // Init Lightbox
 }
 
 window.initLoveJourney = initLoveJourney;
