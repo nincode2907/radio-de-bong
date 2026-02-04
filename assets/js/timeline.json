@@ -54,5 +54,13 @@
         "desc": "Anh chuẩn bị cho Dê Bông với anh cái trạm nghe nhạc, có thể nâng cấp lên nhiều cái trong này!",
         "image": "assets/images/timelines/radio.jpg",
         "icon": "🎁"
+    },
+    {
+        "id": 9,
+        "title": "Hẹn hò công viên Bình Phú",
+        "date": "2026-02-03T19:00:00",
+        "desc": "Anh bị cợm mắt, do hình bóng cô giáo cứ dính mắt, không thể nào dứt ra được, phải qua để bác sĩ khám cho. Bác sĩ yêu lắm, mua cả thuốc nhỏ mắt cho anh. Bác sĩ đã dễ thương chu đáo lại còn cháy nữa, anh cố gắng lắm để nhìn mặt hah, bảo sao không yêu cho được. Nay bác sĩ biết hư với anh hơn rồi, chủ động hôn má anh nha. Ăn tiramisu và ôm người yêu, buổi tối quá đáng nhớ. Yêu!",
+        "image": "assets/images/timelines/shake_hand.jpg",
+        "icon": "💭"
     }
 ]
