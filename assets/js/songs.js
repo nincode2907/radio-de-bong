@@ -360,5 +360,54 @@ const playlist = [
         type: 'suy',
         message: ''
     },
+    {
+        id: 52,
+        file: '52.mp3',
+        title: 'Nổi gió rồi - Châu Thâm',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 53,
+        file: '53.mp3',
+        title: 'Nan Giải - Triệu Tâm Nguyện, NUONUO',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 54,
+        file: '54.mp3',
+        title: 'Trường An Cô Nương - Dư Hựu Ft Đàm Nặc Long',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 55,
+        file: '55.mp3',
+        title: 'Đoá Hồng Chơi Vơi - Anh Tú',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 56,
+        file: '56.mp3',
+        title: 'Em Là Cô Dâu Đẹp Nhất - Châu Khải Phong',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 57,
+        file: '57.mp3',
+        title: 'Hết Thương Cạn Nhớ - Đức Phúc',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 58,
+        file: '58.mp3',
+        title: 'Em Giấu Anh Điều Gì - Trịnh Đình Quang',
+        type: 'suy',
+        message: ''
+    },
 
 ];
