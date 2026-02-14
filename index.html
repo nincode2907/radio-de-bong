@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="assets/images/logo.png">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/albums.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
@@ -42,6 +43,7 @@
                 <span class="nav-icon">💖</span> Hành Trình Tình Yêu
             </li>
             <li class="nav-item" data-target="diary-section"><span class="nav-icon">📖</span> Nhật Ký Tâm Trạng</li>
+            <li class="nav-item" data-target="albums-section"><span class="nav-icon">📸</span> Ảnh bé yêu và anh</li>
             <li class="nav-item" id="lock-secret-btn" style="display: none; color: #ff6b6b;"><span
                     class="nav-icon">🔒</span> Khóa Lại</li>
         </ul>
@@ -148,6 +150,38 @@
                 <button class="send-btn" id="send-diary-btn">
                     <span>Gửi đi</span> <i class="fas fa-paper-plane"></i>
                 </button>
+            </div>
+        </section>
+
+        <section id="albums-section" class="content-section">
+            <!-- Heart View (default) -->
+            <div class="albums-heart-view" id="albums-heart-view">
+                <canvas id="albums-heart-canvas"></canvas>
+                <button class="albums-view-btn" id="albums-view-btn">
+                    Xem ảnh nè <i class="fas fa-arrow-down"></i>
+                </button>
+            </div>
+            <!-- Gallery View -->
+            <div class="albums-gallery-view" id="albums-gallery-view">
+                <div class="albums-gallery-header">
+                    <button class="albums-btn-nav" id="albums-back-btn">
+                        <i class="fas fa-arrow-up"></i> Quay lại
+                    </button>
+                    <button class="albums-btn-nav" id="albums-slideshow-btn">
+                        <i class="fas fa-play"></i> Trình chiếu
+                    </button>
+                </div>
+                <div class="albums-grid" id="albums-grid"></div>
+            </div>
+            <!-- Lightbox -->
+            <div class="albums-lightbox" id="albums-lightbox">
+                <button class="albums-lightbox-close" id="albums-lightbox-close">&times;</button>
+                <button class="albums-lightbox-nav albums-lightbox-prev" id="albums-lightbox-prev"><i
+                        class="fas fa-chevron-left"></i></button>
+                <img class="albums-lightbox-img" id="albums-lightbox-img" src="" alt="Album Photo">
+                <button class="albums-lightbox-nav albums-lightbox-next" id="albums-lightbox-next"><i
+                        class="fas fa-chevron-right"></i></button>
+                <span class="albums-lightbox-counter" id="albums-lightbox-counter"></span>
             </div>
         </section>
 
@@ -336,6 +370,7 @@
     <script src="assets/js/love-journey.js"></script>
     <script src="assets/js/songs.js"></script>
     <script src="assets/js/diary.js"></script>
+    <script src="assets/js/albums.js"></script>
     <script src="assets/js/main.js"></script>
 
 

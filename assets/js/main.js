@@ -1,5 +1,5 @@
 // CONFIGURATION
-const totalImages = 6;
+const totalImages = 31;
 const ENCRYPTED_CONTENT = 'U2FsdGVkX19ldi6C3f2YMmhX4kd83cffq5pckLdF4qT/LNMkdjmvDK9U9pUvvdpp2Lwp2zymf0UJJKV1Xa/g8g==';
 
 // STATE
@@ -268,6 +268,7 @@ function unlockSecretFeatures(showAlert = true) {
 
     // Reveal Hidden Features
     document.querySelector('.nav-item[data-target="diary-section"]').style.display = 'flex';
+    document.querySelector('.nav-item[data-target="albums-section"]').style.display = 'flex';
     document.getElementById('love-nav-item').style.display = 'flex'; // Unlock Love Journey
     document.getElementById('lock-secret-btn').style.display = 'flex';
 
@@ -336,12 +337,22 @@ function switchSection(targetId) {
         addMemoryBtn.classList.remove('visible');
     }
 
+    // Stop Albums heart animation when switching away (save CPU/battery)
+    if (window.AlbumManager) {
+        window.AlbumManager.stop();
+    }
+
     const targetSection = document.getElementById(targetId);
     if (targetSection) {
         targetSection.style.display = 'flex';
         // Force reflow
         void targetSection.offsetWidth;
         targetSection.classList.add('active');
+    }
+
+    // Init Albums tab when switching to it
+    if (targetId === 'albums-section' && window.AlbumManager) {
+        window.AlbumManager.init();
     }
 }
 
@@ -565,7 +576,7 @@ function loadTrack(index) {
     let imgId = Math.floor(Math.random() * totalImages) + 1;
 
     // Set background image
-    disk.style.backgroundImage = `url('assets/images/${imgId}.jpg')`;
+    disk.style.backgroundImage = `url('assets/images/albums/${imgId}.jpg')`;
 
     // Reset disk animation
     disk.style.animationPlayState = 'paused';

@@ -1,0 +1,399 @@
+/* =============================================
+   ALBUMS TAB — Heart View + Gallery + Lightbox
+   ============================================= */
+
+/* --- Section container: stacking context for views --- */
+#albums-section {
+    position: relative;
+    overflow: hidden;
+    min-height: 100dvh;
+}
+
+/* --- Shared View Base (stacked on top of each other) --- */
+.albums-heart-view,
+.albums-gallery-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+/* --- Heart View --- */
+.albums-heart-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    overflow: hidden;
+    z-index: 2;
+}
+
+/* Heart visible (default) */
+.albums-heart-view.slide-in-up {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Heart exits — drifts down & fades */
+.albums-heart-view.slide-out-down {
+    transform: translateY(50px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+#albums-heart-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Gallery View --- */
+.albums-gallery-view {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-color, #0a0a0f);
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 3;
+}
+
+/* Gallery hidden (below viewport) */
+.albums-gallery-view.view-hidden-down {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Gallery visible */
+.albums-gallery-view.view-active {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* --- No text selection on interactive elements --- */
+button,
+.albums-view-btn,
+.albums-btn-nav,
+.albums-lightbox-nav,
+.albums-lightbox-close {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* --- View Albums Button (bottom right of heart view) --- */
+.albums-view-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 5;
+    padding: 14px 28px;
+    border: 2px solid rgba(255, 105, 180, 0.6);
+    border-radius: 50px;
+    background: rgba(255, 105, 180, 0.15);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.35s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: albumsBtnFloat 3s ease-in-out infinite;
+}
+
+.albums-view-btn:hover {
+    background: rgba(255, 105, 180, 0.35);
+    border-color: rgba(255, 105, 180, 0.9);
+    box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
+    transform: translateY(-2px);
+    animation: none;
+}
+
+@keyframes albumsBtnFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* --- Gallery Header (centered buttons) --- */
+.albums-gallery-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 105, 180, 0.15);
+    flex-wrap: wrap;
+}
+
+/* Shared style for gallery nav buttons */
+.albums-btn-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border: 1.5px solid rgba(255, 105, 180, 0.4);
+    border-radius: 30px;
+    background: rgba(255, 105, 180, 0.08);
+    color: #ff69b4;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.albums-btn-nav:hover {
+    background: rgba(255, 105, 180, 0.2);
+    border-color: #ff69b4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.25);
+}
+
+/* --- Gallery Grid --- */
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.albums-grid-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.albums-grid-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 30px rgba(255, 105, 180, 0.2);
+}
+
+.albums-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.albums-grid-item img.loaded {
+    opacity: 1;
+}
+
+/* Loading shimmer */
+.albums-grid-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg,
+            rgba(255, 255, 255, 0.02) 30%,
+            rgba(255, 255, 255, 0.06) 50%,
+            rgba(255, 255, 255, 0.02) 70%);
+    background-size: 200% 100%;
+    animation: albumsShimmer 1.5s infinite;
+    border-radius: 12px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.albums-grid-item.loaded::before {
+    display: none;
+}
+
+@keyframes albumsShimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* --- Lightbox --- */
+.albums-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.95);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    animation: albumsLightboxIn 0.3s ease;
+}
+
+.albums-lightbox.active {
+    display: flex;
+}
+
+@keyframes albumsLightboxIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.albums-lightbox-img {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.albums-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    z-index: 2;
+}
+
+.albums-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.albums-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    z-index: 2;
+}
+
+.albums-lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.albums-lightbox-prev {
+    left: 20px;
+}
+
+.albums-lightbox-next {
+    right: 20px;
+}
+
+.albums-lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+
+    /* Mobile: skip heart, go straight to gallery */
+    .albums-heart-view {
+        display: none !important;
+    }
+
+    .albums-view-btn {
+        display: none !important;
+    }
+
+    #albums-back-btn {
+        display: none !important;
+    }
+
+    .albums-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+
+    .albums-gallery-view {
+        padding: 16px;
+    }
+
+    .albums-gallery-header {
+        gap: 10px;
+    }
+
+    .albums-lightbox-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .albums-lightbox-prev {
+        left: 10px;
+    }
+
+    .albums-lightbox-next {
+        right: 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .albums-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .albums-grid-item {
+        border-radius: 8px;
+    }
+
+    .albums-view-btn {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 18px;
+        font-size: 12px;
+    }
+}

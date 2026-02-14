@@ -35,6 +35,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 
 /* Sidebar */
@@ -162,7 +163,8 @@
 }
 
 /* Hidden by default until unlocked */
-.nav-item[data-target="diary-section"] {
+.nav-item[data-target="diary-section"],
+.nav-item[data-target="albums-section"] {
     display: none;
 }
 
@@ -1405,7 +1407,7 @@ h2 {
     align-items: center;
     gap: 8px;
     margin-bottom: 15px;
-    min-height: 150px;
+    min-height: 220px;
     /* Prevent layout jump */
     transition: opacity 0.2s ease;
 }
@@ -1473,7 +1475,7 @@ h2 {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    min-height: 150px;
+    min-height: 220px;
     /* Match normal view height */
     transition: opacity 0.2s ease;
 }

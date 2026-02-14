@@ -196,6 +196,20 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 60,
+        file: '60.mp3',
+        title: 'Đi Để Trở Về 2 - Soobin Hoàng Sơn',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 61,
+        file: '61.mp3',
+        title: 'Vị Quê Nhà - Noo Phước Thịnh ft. Lou Hoàng',
+        type: 'chill',
+        message: ''
+    },
 
 
     // --- LIST SUY (Nhạc buồn, tâm trạng) ---
@@ -406,6 +420,34 @@ const playlist = [
         id: 58,
         file: '58.mp3',
         title: 'Em Giấu Anh Điều Gì - Trịnh Đình Quang',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 59,
+        file: '59.mp3',
+        title: 'Cơm Đoàn Viên - Thành Đạt',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 62,
+        file: '62.mp3',
+        title: 'Hoa Bất Tử - Thành Đạt x Phát Huy T4',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 63,
+        file: '63.mp3',
+        title: 'Mảnh Tình Sai Đôi - Thành Đạt',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 64,
+        file: '64.mp3',
+        title: 'Ngày Mai Người Ta Lấy Chồng - Quốc Thiên Cover',
         type: 'suy',
         message: ''
     },
