@@ -4,7 +4,7 @@
 
 // --- Configuration ---
 const ALBUM_CONFIG = {
-    totalImages: 31,
+    totalImages: 36,
     path: './assets/images/albums/',
     ext: '.jpg',
     slideshowInterval: 1500 // 1.5s
