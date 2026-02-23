@@ -1,5 +1,5 @@
 // CONFIGURATION
-const totalImages = 36;
+const totalImages = 41;
 const ENCRYPTED_CONTENT = 'U2FsdGVkX19ldi6C3f2YMmhX4kd83cffq5pckLdF4qT/LNMkdjmvDK9U9pUvvdpp2Lwp2zymf0UJJKV1Xa/g8g==';
 
 // STATE
