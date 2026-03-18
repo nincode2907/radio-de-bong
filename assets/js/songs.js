@@ -217,6 +217,111 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 68,
+        file: '68.mp3',
+        title: 'Bài này không để đi diễn - Anh Tu Atus',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 69,
+        file: '69.mp3',
+        title: 'Dạo Bước Hong Kong 1999 - PhongG',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 70,
+        file: '70.mp3',
+        title: 'Được không - Binz ft. Châu Bùi',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 71,
+        file: '71.mp3',
+        title: 'Em Đồng Ý - Juky San',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 73,
+        file: '73.mp3',
+        title: 'Từ Ngày Hôm Nay - Anh Tú Atus',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 74,
+        file: '74.mp3',
+        title: 'Một Đời - 14 Casper & Bon Nghiêm (feat. buitruonglinh)',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 75,
+        file: '75.mp3',
+        title: 'Anh chẳng thể (Lofi Ver.) - Phạm Kỳ x Orinn',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 77,
+        file: '77.mp3',
+        title: 'Có Ai Hẹn Hò Cùng Em Chưa - Quân A.P',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 78,
+        file: '78.mp3',
+        title: 'Có Một Người, Luôn Cười Khi Anh Đến - Tofu, PC & D.Blue (Prod. by 1nG)',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 79,
+        file: '79.mp3',
+        title: 'Ghế Qua - Dick x PC x Tofu',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 83,
+        file: '83.mp3',
+        title: 'Hẹn Gặp Em Dưới Ánh Trăng - HURRYKNG, HIEUTHUHAI, MANBO',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 84,
+        file: '84.mp3',
+        title: 'Lễ Đường - KAI ĐINH',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 86,
+        file: '86.mp3',
+        title: 'Ngày Đầu Tiên - Đức Phúc',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 87,
+        file: '87.mp3',
+        title: '10 Ngàn Năm - PC',
+        type: 'chill',
+        message: ''
+    },
+    {
+        id: 89,
+        file: '89.mp3',
+        title: 'Già Cùng Nhau Là Được - Tùng TeA ft. PC',
+        type: 'chill',
+        message: ''
+    },
 
     //Type chill here
 
@@ -470,6 +575,62 @@ const playlist = [
         id: 67,
         file: '67.mp3',
         title: 'Mở Lòng Vì Ai Remix - Giang Jolee x ThahTrung',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 71,
+        file: '71.mp3',
+        title: 'Giữ Anh Em Cũng Làm Không Xong - LyLy',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 76,
+        file: '76.mp3',
+        title: 'Cảm Ơn Người Đã Thức Cùng Tôi',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 80,
+        file: '80.mp3',
+        title: 'Hẹn Một Mai - Bùi Anh Tuấn',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 81,
+        file: '81.mp3',
+        title: 'Không Buông - Hngle ft. Ari',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 82,
+        file: '82.mp3',
+        title: 'Hôm Nay Em Cưới Rồi - Khải Đăng',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 85,
+        file: '85.mp3',
+        title: 'Một Bước Yêu Vạn Dặm Đau - Đức Phúc, Quân A.P',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 88,
+        file: '88.mp3',
+        title: 'Suýt Nữa Thì - ANDIEZ',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 90,
+        file: '90.mp3',
+        title: 'Mây Lang Thang - Tùng TeA & PC ft. New$oulZ',
         type: 'suy',
         message: ''
     },
