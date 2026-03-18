@@ -1,5 +1,5 @@
 // CONFIGURATION
-const totalImages = 41;
+const totalImages = 86;
 const ENCRYPTED_CONTENT = 'U2FsdGVkX19ldi6C3f2YMmhX4kd83cffq5pckLdF4qT/LNMkdjmvDK9U9pUvvdpp2Lwp2zymf0UJJKV1Xa/g8g==';
 
 // STATE
@@ -69,6 +69,16 @@ const moodItems = document.querySelectorAll('.mood-item');
 const diaryContent = document.getElementById('diary-content');
 const sendDiaryBtn = document.getElementById('send-diary-btn');
 let selectedMood = 'vui'; // Default
+
+// MINI PLAYER DOM
+const miniPlayer = document.getElementById('mini-player');
+const miniDisk = document.getElementById('mini-disk');
+const miniTitle = document.getElementById('mini-title');
+const miniProgress = document.getElementById('mini-progress');
+const miniProgressContainer = document.getElementById('mini-progress-container');
+const miniPlayBtn = document.getElementById('mini-play');
+const miniPrevBtn = document.getElementById('mini-prev');
+const miniNextBtn = document.getElementById('mini-next');
 
 // SLEEP TIMER DOM & STATE
 const sleepBtn = document.getElementById('sleep-btn');
@@ -231,7 +241,7 @@ if (lockSecretBtn) {
     lockSecretBtn.addEventListener('click', lockSecretMode);
 }
 
-const SESSION_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 const SECRET_KEY = 'babe_secret_session';
 
 function checkSecretSession() {
@@ -353,6 +363,16 @@ function switchSection(targetId) {
     // Init Albums tab when switching to it
     if (targetId === 'albums-section' && window.AlbumManager) {
         window.AlbumManager.init();
+    }
+
+    // Mini Player: show when NOT on player tab, hide when on player tab
+    if (miniPlayer) {
+        if (targetId === 'player-section') {
+            miniPlayer.classList.remove('active');
+        } else {
+            syncMiniPlayer();
+            miniPlayer.classList.add('active');
+        }
     }
 }
 
@@ -581,6 +601,9 @@ function loadTrack(index) {
     // Reset disk animation
     disk.style.animationPlayState = 'paused';
 
+    // Sync mini player info
+    syncMiniPlayer();
+
     updateFavIcon();
     updateActivePlaylistItem();
 
@@ -672,6 +695,12 @@ function playMusic() {
     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
     disk.style.animationPlayState = 'running';
 
+    // Sync mini player
+    if (miniPlayer) {
+        miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        miniPlayer.classList.add('playing');
+    }
+
     // Update Document Title
     const currentTrack = currentPlaylist[currentIndex];
     if (currentTrack) document.title = `${currentTrack.title} 🎵`;
@@ -723,6 +752,12 @@ function pauseMusic() {
     isPlaying = false;
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
     disk.style.animationPlayState = 'paused';
+
+    // Sync mini player
+    if (miniPlayer) {
+        miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+        miniPlayer.classList.remove('playing');
+    }
     // Revert Document Title
     document.title = 'TRẠM SẠC PIN RIÊNG CỦA DÊ BÔNG 🔋';
 
@@ -1028,6 +1063,11 @@ audio.addEventListener('timeupdate', (e) => {
     const { duration, currentTime } = e.srcElement;
     const progressPercent = (currentTime / duration) * 100;
     progress.style.width = `${progressPercent}%`;
+
+    // Sync mini player progress
+    if (miniProgress) {
+        miniProgress.style.width = `${progressPercent}%`;
+    }
 
     // Time Display
     if (duration) {
@@ -1567,6 +1607,60 @@ function resetDiskPosition(fromSide) {
     setTimeout(() => {
         isAnimating = false;
     }, 500);
+}
+
+// --- MINI PLAYER FUNCTIONS ---
+function syncMiniPlayer() {
+    if (!miniPlayer) return;
+    const track = currentPlaylist[currentIndex];
+    if (!track) return;
+
+    // Sync disk image
+    miniDisk.style.backgroundImage = disk.style.backgroundImage;
+
+    // Sync title
+    miniTitle.textContent = track.title;
+
+    // Sync play state
+    if (isPlaying) {
+        miniPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        miniPlayer.classList.add('playing');
+    } else {
+        miniPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+        miniPlayer.classList.remove('playing');
+    }
+
+    // Sync progress
+    if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        miniProgress.style.width = `${percent}%`;
+    }
+}
+
+// Mini player control events
+if (miniPlayBtn) {
+    miniPlayBtn.addEventListener('click', () => {
+        if (isPlaying) pauseMusic();
+        else playMusic();
+    });
+}
+if (miniPrevBtn) {
+    miniPrevBtn.addEventListener('click', () => prevTrack());
+}
+if (miniNextBtn) {
+    miniNextBtn.addEventListener('click', () => nextTrack());
+}
+
+// Mini progress bar click to seek
+if (miniProgressContainer) {
+    miniProgressContainer.addEventListener('click', (e) => {
+        const width = miniProgressContainer.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        if (duration) {
+            audio.currentTime = (clickX / width) * duration;
+        }
+    });
 }
 
 // BOOT

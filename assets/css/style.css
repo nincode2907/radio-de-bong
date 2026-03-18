@@ -2480,3 +2480,158 @@ body.immersive-mode #sidebar.open {
     transform: scale(1.1);
     background: var(--accent-color);
 }
+
+/* =========================================
+   MINI PLAYER (Desktop Only)
+   ========================================= */
+.mini-player {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.4s ease,
+        padding 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 12px;
+    margin: 0;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid transparent;
+}
+
+.mini-player.active {
+    max-height: 140px;
+    opacity: 1;
+    padding: 12px;
+    margin: 10px 0;
+    border-color: var(--secondary-color);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .mini-player.active {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Top row: Disk + Title + Progress */
+.mini-player-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+/* Mini disk - spinning vinyl */
+.mini-player-disk {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background-color: #000;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 0 0 2px var(--disk-border);
+    animation: rotate 10s linear infinite;
+    animation-play-state: paused;
+}
+
+.mini-player.playing .mini-player-disk {
+    animation-play-state: running;
+}
+
+/* Song title */
+.mini-player-info {
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.mini-player-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+}
+
+/* Progress bar */
+.mini-player-progress-container {
+    width: 100%;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+[data-theme="dark"] .mini-player-progress-container {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mini-player-progress {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+/* Controls row */
+.mini-player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.mini-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--secondary-text);
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-btn:hover {
+    color: var(--text-color);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .mini-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mini-play-btn {
+    font-size: 1rem;
+    color: var(--text-color);
+    width: 32px;
+    height: 32px;
+    background: var(--bg-color);
+    border-radius: 50%;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05), -2px -2px 5px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .mini-play-btn {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3), -2px -2px 5px rgba(255, 255, 255, 0.05);
+}
+
+.mini-play-btn:hover {
+    color: var(--accent-color);
+    transform: scale(1.08);
+    background: var(--bg-color);
+}
+
+/* Hide mini player on mobile (no need per user request) */
+@media (max-width: 768px) {
+    .mini-player {
+        display: none !important;
+    }
+}

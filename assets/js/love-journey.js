@@ -620,7 +620,7 @@ async function submitMemory() {
     const icon = iconEl.value;
 
     if (!title || !dateValue) {
-        alert('Vui lòng nhập Tiêu đề và Ngày giờ!');
+        alert('Thiếu kìa bé iu!');
         return;
     }
 

@@ -210,7 +210,15 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 65,
+        file: '65.mp3',
+        title: 'Người Im Lặng Gặp Người Hay Nói - HIEUTHUHAI',
+        type: 'chill',
+        message: ''
+    },
 
+    //Type chill here
 
     // --- LIST SUY (Nhạc buồn, tâm trạng) ---
     {
@@ -451,5 +459,20 @@ const playlist = [
         type: 'suy',
         message: ''
     },
+    {
+        id: 66,
+        file: '66.mp3',
+        title: 'Kỷ Niệm Giảm Cầm Chúng Ta - Thanh Hưng',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 67,
+        file: '67.mp3',
+        title: 'Mở Lòng Vì Ai Remix - Giang Jolee x ThahTrung',
+        type: 'suy',
+        message: ''
+    },
+    //Type suy here
 
 ];
