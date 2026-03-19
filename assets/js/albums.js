@@ -5,7 +5,8 @@
 // --- Configuration ---
 const ALBUM_CONFIG = {
     totalImages: 86,
-    path: 'https://res.cloudinary.com/dwn9n8bk1/image/upload/v1773891458/babe/',
+    // Thêm f_auto,q_auto để Cloudinary tự nén dung lượng và đổi định dạng cho nhẹ
+    path: 'https://res.cloudinary.com/dwn9n8bk1/image/upload/f_auto,q_auto/v1773891458/babe/',
     ext: '.jpg',
     slideshowInterval: 1500 // 1.5s
 };
@@ -482,7 +483,8 @@ const AlbumManager = (() => {
                 showHeart(false);
                 HeartEngine.start();
             }
-            preloadImages();
+            // Tắt tính năng pre-load để browser chỉ tải ảnh khi cuộn chuột tới (lazy loading)
+            // preloadImages();
         },
         stop() {
             HeartEngine.stop();
