@@ -5,7 +5,7 @@
 // --- Configuration ---
 const ALBUM_CONFIG = {
     totalImages: 86,
-    path: './assets/images/albums/',
+    path: 'https://res.cloudinary.com/dwn9n8bk1/image/upload/v1773891458/babe/',
     ext: '.jpg',
     slideshowInterval: 1500 // 1.5s
 };

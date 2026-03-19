@@ -273,7 +273,6 @@ function lockSecretMode() {
 }
 
 function unlockSecretFeatures(showAlert = true) {
-    if (showAlert) alert("Mở khóa thành công! Chào mừng bà chủ về nhà. 🥰");
     closePasswordModal();
 
     // Reveal Hidden Features
@@ -302,9 +301,6 @@ function checkPassword() {
         const originalText = bytes.toString(CryptoJS.enc.Utf8);
 
         if (originalText && originalText.length > 5) { // Simple validation check
-            // Success
-            alert("Mở khóa thành công! Chào mừng bà chủ về nhà. 🥰");
-            // Create Session
             const session = {
                 timestamp: Date.now(),
                 token: btoa(pass)
@@ -564,7 +560,7 @@ function loadTrack(index) {
     if (!track) return; // Empty list
 
     // Set audio source (check if already preloaded for optimization)
-    const trackUrl = `assets/musics/${track.file}`;
+    const trackUrl = `https://res.cloudinary.com/dwn9n8bk1/video/upload/v1773892099/babe_audio/${track.file}`;
     if (!usePreloadedAudio(track.file)) {
         audio.src = trackUrl;
     }
@@ -596,7 +592,7 @@ function loadTrack(index) {
     let imgId = Math.floor(Math.random() * totalImages) + 1;
 
     // Set background image
-    disk.style.backgroundImage = `url('assets/images/albums/${imgId}.jpg')`;
+    disk.style.backgroundImage = `url('https://res.cloudinary.com/dwn9n8bk1/image/upload/v1773891458/babe/${imgId}.jpg')`;
 
     // Reset disk animation
     disk.style.animationPlayState = 'paused';
@@ -611,7 +607,7 @@ function loadTrack(index) {
     localStorage.setItem('babe_song_id', track.id);
 
     // Store current artwork URL globally for Media Session updates
-    window.currentArtworkUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}assets/images/${imgId}.jpg`;
+    window.currentArtworkUrl = `https://res.cloudinary.com/dwn9n8bk1/image/upload/v1773891458/babe/${imgId}.jpg`;
 
     // Update Media Session for lock screen controls
     updateMediaSession();
@@ -666,7 +662,7 @@ function preloadNextTrack() {
     }
 
     // Set source and start preloading
-    preloadAudio.src = `assets/musics/${nextTrack.file}`;
+    preloadAudio.src = `https://res.cloudinary.com/dwn9n8bk1/video/upload/v1773892099/babe_audio/${nextTrack.file}`;
     preloadedTrackFile = nextTrack.file;
 
     // Load enough data (browser will cache it)
