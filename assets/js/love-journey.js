@@ -1,7 +1,7 @@
 // LOVE JOURNEY LOGIC - V3 (Per-Digit Odometer Animation)
 
 const START_DATE = new Date("2026-01-30T08:00:00").getTime();
-const TIMELINE_FILE = 'assets/js/timeline.json';
+const TIMELINE_FILE = 'https://radio-proxy.services2907.workers.dev';
 
 // DOM Elements
 const timelineContainer = document.getElementById('love-timeline');
@@ -350,6 +350,7 @@ function setupLazyLoading() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
+                if (isAutoScrolling) return; // Ignore intersection during auto-scroll play
                 entry.target.classList.add('visible');
                 // Add stagger delay based on index
                 const index = entry.target.dataset.index;
@@ -430,12 +431,11 @@ function hideTimelineFullpage() {
 }
 
 function startPlayJourney() {
+    isAutoScrolling = true; // Set immediately to prevent IntersectionObserver from triggering
     showTimelineFullpage();
 
     // Wait for transition then start auto-scroll
     setTimeout(() => {
-        isAutoScrolling = true;
-
         // Enable Immersive Mode (Hide UI)
         document.body.classList.add('immersive-mode');
 
