@@ -322,6 +322,13 @@ const playlist = [
         type: 'chill',
         message: ''
     },
+    {
+        id: 92,
+        file: '92.mp3',
+        title: 'Chẳng Thích Thế Giới',
+        type: 'chill',
+        message: ''
+    },
 
     //Type chill here
 
@@ -631,6 +638,13 @@ const playlist = [
         id: 90,
         file: '90.mp3',
         title: 'Mây Lang Thang - Tùng TeA & PC ft. New$oulZ',
+        type: 'suy',
+        message: ''
+    },
+    {
+        id: 91,
+        file: '91.mp3',
+        title: 'Khó Giữ Chân Thành',
         type: 'suy',
         message: ''
     },

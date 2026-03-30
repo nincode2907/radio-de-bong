@@ -4,7 +4,7 @@
 
 // --- Configuration ---
 const ALBUM_CONFIG = {
-    totalImages: 86,
+    totalImages: 96,
     // Thêm f_auto,q_auto để Cloudinary tự nén dung lượng và đổi định dạng cho nhẹ
     path: 'https://res.cloudinary.com/dwn9n8bk1/image/upload/f_auto,q_auto/v1773891458/babe/',
     ext: '.jpg',
